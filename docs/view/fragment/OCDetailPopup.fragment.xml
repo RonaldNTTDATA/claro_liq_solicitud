@@ -1,0 +1,219 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:layout="sap.ui.layout">
+	<Dialog
+		title="Detalle {dialogModel>/documentType} - {dialogModel>/documentReference}"
+		contentWidth="900px"
+		contentHeight="700px"
+		draggable="true"
+		resizable="true">
+		<content>
+			<VBox class="sapUiSmallMargin">
+				
+				<!-- Información General -->
+				<Panel
+					headerText="Información General"
+					expandable="true"
+					expanded="true"
+					class="sapUiSmallMarginBottom">
+					<content>
+						<layout:form.SimpleForm
+							editable="false"
+							layout="ResponsiveGridLayout"
+							labelSpanXL="3"
+							labelSpanL="3"
+							labelSpanM="4"
+							emptySpanXL="1"
+							emptySpanL="1"
+							emptySpanM="0"
+							columnsXL="2"
+							columnsL="2"
+							columnsM="1">
+							<layout:content>
+								<Label text="Documento" />
+								<Text text="{dialogModel>/documentReference}" />
+
+								<Label text="Tipo" />
+								<Text text="{dialogModel>/documentType}" />
+
+								<Label text="PEP" />
+								<Text text="{dialogModel>/pepCode}" />
+
+								<Label text="Fondo" />
+								<Text text="{dialogModel>/fund}" />
+
+								<Label text="Acreedor" />
+								<Text text="{dialogModel>/supplierCode} - {dialogModel>/supplierName}" />
+
+								<Label text="Fecha Entrega" />
+								<Text text="{path: 'dialogModel>/deliveryDate', formatter: '.formatter.formatDate'}" />
+
+								<Label text="Material" />
+								<Text text="{dialogModel>/material} - {dialogModel>/materialText}" />
+
+								<Label text="Tipo Material" />
+								<Text text="{dialogModel>/materialType}" />
+
+								<Label text="Entrada Final" />
+								<core:Icon
+									src="{= ${dialogModel>/entryFinal} ? 'sap-icon://accept' : 'sap-icon://decline' }"
+									color="{= ${dialogModel>/entryFinal} ? '#107E3E' : '#BB0000' }"
+									size="1.2rem" />
+
+								<Label text=" " />
+								<Text text=" " />
+
+								<Label text="Importe Total" />
+								<ObjectNumber
+									number="{dialogModel>/amountSoles}"
+									unit="PEN"
+									emphasized="true" />
+
+								<Label text="Importe EM" />
+								<ObjectNumber
+									number="{dialogModel>/amountSolesEM}"
+									unit="PEN" />
+
+								<Label text="% Aceptación" />
+								<ObjectNumber
+									number="{dialogModel>/acceptancePercentage}"
+									unit="%"
+									state="{= ${dialogModel>/acceptancePercentage} >= 100 ? 'Success' : ${dialogModel>/acceptancePercentage} >= 80 ? 'Warning' : 'Error' }" />
+
+								<Label text="Importe RF" />
+								<ObjectNumber
+									number="{dialogModel>/amountSolesRF}"
+									unit="PEN" />
+
+								<Label text="% Facturación" />
+								<ObjectNumber
+									number="{dialogModel>/invoicePercentage}"
+									unit="%"
+									state="{= ${dialogModel>/invoicePercentage} >= 100 ? 'Success' : ${dialogModel>/invoicePercentage} >= 80 ? 'Warning' : 'Error' }" />
+							</layout:content>
+						</layout:form.SimpleForm>
+					</content>
+				</Panel>
+
+				<!-- Historial del Pedido -->
+				<Panel
+					headerText="Historial del Pedido"
+					expandable="true"
+					expanded="true"
+					class="sapUiSmallMarginBottom">
+					<content>
+						<VBox>
+							<!-- Entradas de Mercancía -->
+							<Label text="Entradas de Mercancía (EM)" design="Bold" class="sapUiSmallMarginBottom" />
+							
+							<Table
+								items="{dialogModel>/history/goodsReceipts}"
+								visible="{= ${dialogModel>/history/goodsReceipts}.length > 0 }">
+								<columns>
+									<Column width="15%">
+										<Text text="Número EM" />
+									</Column>
+									<Column width="15%">
+										<Text text="Fecha" />
+									</Column>
+									<Column width="10%">
+										<Text text="Cantidad" />
+									</Column>
+									<Column width="20%">
+										<Text text="Responsable" />
+									</Column>
+									<Column width="15%">
+										<Text text="Importe" />
+									</Column>
+									<Column>
+										<Text text="Doc. Físico" />
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{dialogModel>number}" />
+											<Text text="{path: 'dialogModel>date', formatter: '.formatter.formatDate'}" />
+											<Text text="{dialogModel>quantity}" />
+											<Text text="{dialogModel>responsible}" />
+											<ObjectNumber
+												number="{dialogModel>amount}"
+												unit="PEN" />
+											<Link text="{dialogModel>document}" press=".onViewDocument" />
+										</cells>
+									</ColumnListItem>
+								</items>
+								<noData>
+									<Text text="No hay entradas de mercancía registradas" />
+								</noData>
+							</Table>
+
+							<!-- Separador -->
+							<core:HTML content="<div style='height:20px'></div>" />
+
+							<!-- Entradas de Factura -->
+							<Label text="Registros de Factura (RF)" design="Bold" class="sapUiSmallMarginBottom" />
+							
+							<Table
+								items="{dialogModel>/history/invoiceReceipts}"
+								visible="{= ${dialogModel>/history/invoiceReceipts}.length > 0 }">
+								<columns>
+									<Column width="15%">
+										<Text text="Número RF" />
+									</Column>
+									<Column width="15%">
+										<Text text="Fecha" />
+									</Column>
+									<Column width="15%">
+										<Text text="Importe" />
+									</Column>
+									<Column width="20%">
+										<Text text="Ref. Logística" />
+									</Column>
+									<Column>
+										<Text text="Estado Pago" />
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{dialogModel>number}" />
+											<Text text="{path: 'dialogModel>date', formatter: '.formatter.formatDate'}" />
+											<ObjectNumber
+												number="{dialogModel>amount}"
+												unit="PEN" />
+											<Text text="{dialogModel>logisticReference}" />
+											<ObjectStatus
+												text="{dialogModel>paymentStatus}"
+												state="{= ${dialogModel>paymentStatus} === 'Pagado' ? 'Success' : 'Warning' }" />
+										</cells>
+									</ColumnListItem>
+								</items>
+								<noData>
+									<Text text="No hay registros de factura" />
+								</noData>
+							</Table>
+
+							<MessageStrip
+								text="Sin historial de movimientos registrados"
+								type="Information"
+								showIcon="true"
+								visible="{= ${dialogModel>/history/goodsReceipts}.length === 0 &amp;&amp; ${dialogModel>/history/invoiceReceipts}.length === 0 }"
+								class="sapUiSmallMarginTop" />
+						</VBox>
+					</content>
+				</Panel>
+			</VBox>
+		</content>
+		<buttons>
+			<Button
+				text="Abrir en SAP"
+				icon="sap-icon://open-command-field"
+				press="onOpenOCInSAP" />
+			<Button
+				text="Cerrar"
+				press="onCloseOCDialog" />
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

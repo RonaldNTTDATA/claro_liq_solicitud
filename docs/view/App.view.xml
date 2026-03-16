@@ -1,0 +1,17 @@
+<mvc:View
+	controllerName="com.demo.prototype.controller.App"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true">
+	<Shell id="shell">
+		<App id="app" busy="{appModel>/busy}">
+			<pages>
+				<Page id="appPage">
+					<content>
+						<!-- El contenido será cargado dinámicamente por el Router -->
+					</content>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>

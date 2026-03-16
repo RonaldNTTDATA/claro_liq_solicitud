@@ -1,0 +1,303 @@
+<mvc:View
+	controllerName="com.demo.prototype.controller.ProjectManagement.ProjectList"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+	xmlns:layout="sap.ui.layout"
+	displayBlock="true"
+	height="100%">
+	<f:DynamicPage id="dynamicPageId" toggleHeaderOnTitleClick="false">
+		<!-- Header -->
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<Title text="{i18n>projectListTitle}" level="H1" />
+				</f:heading>
+				<f:navigationActions>
+					<!-- <Button icon="sap-icon://log" tooltip="Cerrar Sesión" press="onLogout" /> -->
+				</f:navigationActions>
+				<f:actions>
+					<Button 
+						icon="sap-icon://refresh" 
+						text="{i18n>btnRefresh}" 
+						press="onRefresh" />
+					<Button 
+						icon="sap-icon://excel-attachment" 
+						text="{i18n>btnExport}" 
+						press="onExportExcel" />
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+
+		<!-- Header Content -->
+		<f:header>
+			<f:DynamicPageHeader pinnable="true">
+				<!-- Message Strip para proyectos rechazados -->
+				<MessageStrip 
+					visible="{= ${projectModel>/rejectedCount} > 0 }"
+					text="Tiene {projectModel>/rejectedCount} proyecto(s) rechazado(s). Revise los motivos."
+					type="Error"
+					showIcon="true"
+					class="sapUiSmallMarginBottom" />
+
+				<!-- Panel de Filtros -->
+				<Panel 
+					headerText="{i18n>filterPanelTitle}" 
+					expandable="true" 
+					expanded="false"
+					width="100%">
+					<layout:Grid 
+						defaultSpan="XL3 L4 M6 S12" 
+						hSpacing="1" 
+						vSpacing="1">
+						<!-- Filtro Código -->
+						<layout:content>
+							<VBox>
+								<Label text="{i18n>filterCode}" labelFor="filterCodeInput" />
+								<Input 
+									id="filterCodeInput" 
+									value="{projectModel>/filters/code}"
+									placeholder="NDRSAP..." 
+									showSuggestion="true"
+									suggestionItems="{projectModel>/allProjects}"
+									submit="onFilterApply">
+									<suggestionItems>
+										<core:Item text="{projectModel>code}" />
+									</suggestionItems>
+								</Input>
+							</VBox>
+						</layout:content>
+
+						<!-- Filtro Estado -->
+						<layout:content>
+							<VBox>
+								<Label text="{i18n>filterStatus}" labelFor="filterStatusSelect" />
+								<MultiComboBox 
+									id="filterStatusSelect"
+									selectedKeys="{projectModel>/filters/status}"
+									items="{projectModel>/statusOptions}">
+									<core:Item key="{projectModel>key}" text="{projectModel>text}" />
+								</MultiComboBox>
+							</VBox>
+						</layout:content>
+
+						<!-- Filtro Gerente -->
+						<layout:content>
+							<VBox>
+								<Label text="Gerente" labelFor="filterManagerSelect" />
+								<ComboBox 
+									id="filterManagerSelect"
+									selectedKey="{projectModel>/filters/manager}"
+									items="{projectModel>/managerOptions}">
+									<core:Item key="{projectModel>key}" text="{projectModel>text}" />
+								</ComboBox>
+							</VBox>
+						</layout:content>
+
+						<!-- Botones de Filtro -->
+						<layout:content>
+							<VBox justifyContent="End" height="100%">
+								<HBox>
+									<Button 
+										text="{i18n>filterClear}" 
+										press="onFilterClear" 
+										class="sapUiTinyMarginEnd" />
+									<Button 
+										text="{i18n>filterApply}" 
+										type="Emphasized" 
+										press="onFilterApply" />
+								</HBox>
+							</VBox>
+						</layout:content>
+					</layout:Grid>
+				</Panel>
+			</f:DynamicPageHeader>
+		</f:header>
+
+		<!-- Content -->
+		<f:content>
+			<VBox class="sapUiSmallMargin">
+				<!-- Contador de proyectos -->
+				<Toolbar>
+					<ToolbarSpacer />
+					<Text text="{projectModel>/projectCount}" class="sapUiTinyMarginEnd" />
+				</Toolbar>
+
+				<!-- Scroll Container para tabla ancha -->
+				<ScrollContainer 
+					height="100%" 
+					width="100%" 
+					horizontal="true" 
+					vertical="false">
+					<!-- Tabla de proyectos -->
+					<Table
+						id="projectsTable"
+						items="{
+							path: 'projectModel>/projects',
+							sorter: {
+								path: 'code'
+							}
+						}"
+						growing="true"
+						growingThreshold="50"
+						sticky="ColumnHeaders,HeaderToolbar"
+						mode="SingleSelectMaster"
+						selectionChange="onProjectPress"
+						noDataText="{i18n>msgNoData}"
+						width="auto">
+						<columns>
+							<Column width="8rem" minScreenWidth="Desktop" demandPopin="true">
+								<Text text="{i18n>colStatus}" />
+							</Column>
+							<Column width="9rem">
+								<Text text="{i18n>colCode}" />
+							</Column>
+							<Column width="12rem" minScreenWidth="Desktop" demandPopin="true">
+								<Text text="{i18n>colDescription}" />
+							</Column>
+							<Column width="15rem" minScreenWidth="Desktop" demandPopin="true">
+								<Text text="{i18n>colName}" />
+							</Column>
+							<Column width="12rem" minScreenWidth="Desktop" demandPopin="true">
+								<Text text="{i18n>colDirection}" />
+							</Column>
+							<Column width="12rem" minScreenWidth="Tablet" demandPopin="true">
+								<Text text="{i18n>colManagement}" />
+							</Column>
+							<Column width="12rem" minScreenWidth="Desktop" demandPopin="true">
+								<Text text="{i18n>colManager}" />
+							</Column>
+							<Column width="12rem" minScreenWidth="Desktop" demandPopin="true">
+								<Text text="{i18n>colRequestDirection}" />
+							</Column>
+							<Column width="12rem" minScreenWidth="Desktop" demandPopin="true">
+								<Text text="{i18n>colRequestDepartment}" />
+							</Column>
+							<Column width="8rem" minScreenWidth="Tablet" demandPopin="true">
+								<Text text="{i18n>colStartDate}" />
+							</Column>
+					<Column width="8rem" minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>colEndDate}" />
+					</Column>
+					<Column width="10rem" hAlign="End" minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>colImporteComprometido}" />
+					</Column>
+					<Column width="10rem" hAlign="End" minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>colImporteReal}" />
+					</Column>
+					<Column width="6rem" hAlign="Center" minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>colCurrency}" />
+					</Column>
+					<Column width="8rem" hAlign="Center" minScreenWidth="Desktop" demandPopin="true">
+						<Text text="{i18n>colSemaphore}" />
+					</Column>
+					<Column width="5rem" hAlign="Center" minScreenWidth="Desktop" demandPopin="true">
+						<Text text="Acciones" />
+					</Column>
+				</columns>
+					<items>
+						<ColumnListItem type="Active">
+							<cells>
+								<!-- Estado -->
+								<ObjectStatus 
+									text="{projectModel>status}" 
+									state="{
+										path: 'projectModel>status',
+										formatter: '.formatter.formatState'
+									}" />
+								
+								<!-- Código (link) -->
+								<Link 
+									text="{projectModel>code}" 
+									press="onProjectPress" />
+								
+								<!-- Descripción -->
+								<Text text="{projectModel>description}" />
+								
+								<!-- Nombre -->
+								<Text text="{projectModel>name}" />
+								
+								<!-- Dirección Ejecutora -->
+								<Text text="{projectModel>direction}" />
+								
+								<!-- Gerencia Ejecutora -->
+								<Text text="{projectModel>management}" />
+								
+								<!-- Gerente -->
+								<Text text="{projectModel>manager}" />
+								
+								<!-- Dirección Solicitante -->
+								<Text text="{projectModel>requestDirection}" />
+								
+								<!-- Jefatura Solicitante -->
+								<Text text="{projectModel>requestDepartment}" />
+								
+								<!-- Fecha Inicio -->
+								<Text text="{
+									path: 'projectModel>startDate',
+									formatter: '.formatter.formatDate'
+								}" />
+								
+								<!-- Fecha Fin -->
+								<Text text="{
+									path: 'projectModel>endDate',
+									formatter: '.formatter.formatDate'
+								}" />
+								
+							<!-- Moneda -->
+							<Text text="{projectModel>currency}" />
+							
+							<!-- Importe Comprometido -->
+							<ObjectNumber 
+								number="{
+									path: 'projectModel>importeComprometido',
+									formatter: '.formatter.formatNumber'
+								}"
+								emphasized="false" />
+							
+							<!-- Importe Real -->
+							<ObjectNumber 
+								number="{
+									path: 'projectModel>importeReal',
+									formatter: '.formatter.formatNumber'
+								}"
+								emphasized="false" />
+							
+							<!-- Semáforo -->
+							<HBox alignItems="Center" justifyContent="Center">
+								<core:Icon 
+									src="{
+										path: 'projectModel>semaphore',
+										formatter: '.formatter.formatSemaphoreIcon'
+									}"
+									color="{
+										path: 'projectModel>semaphore',
+										formatter: '.formatter.formatSemaphoreColorCode'
+									}"
+									size="1.5rem"
+									tooltip="{
+										parts: [
+											'projectModel>semaphore',
+											'projectModel>validPepPercentage'
+										],
+										formatter: '.formatSemaphoreDetailedTooltip'
+									}" />
+							</HBox>
+
+							<!-- Acciones -->
+							<HBox justifyContent="Center">
+								<Button 
+									icon="sap-icon://detail-view" 
+									type="Transparent"
+									press="onProjectPress" />
+							</HBox>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+			</ScrollContainer>
+		</VBox>
+	</f:content>
+</f:DynamicPage>
+</mvc:View>

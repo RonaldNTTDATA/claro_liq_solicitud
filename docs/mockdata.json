@@ -1,0 +1,245 @@
+{
+  "projects": [
+    {
+      "id": "PRJ-001",
+      "name": "Implementación ERP Módulo FI",
+      "description": "Implementación completa del módulo financiero SAP FI para centralizar la contabilidad corporativa",
+      "manager": "Juan Pérez",
+      "managerId": "gerente1",
+      "startDate": "2024-01-15",
+      "endDate": "2024-12-31",
+      "budget": 5500000,
+      "status": "En Ejecución",
+      "progress": 95,
+      "requestStatus": null,
+      "approvalStatus": null,
+      "peps": [
+        { "id": "PEP-001-01", "description": "Análisis y Diseño", "budget": 800000, "spent": 780000, "status": "LIQ" },
+        { "id": "PEP-001-02", "description": "Desarrollo", "budget": 2000000, "spent": 1950000, "status": "LIQ" },
+        { "id": "PEP-001-03", "description": "Testing", "budget": 700000, "spent": 680000, "status": "LIQ" },
+        { "id": "PEP-001-04", "description": "Capacitación", "budget": 500000, "spent": 480000, "status": "LIQ" }
+      ]
+    },
+    {
+      "id": "PRJ-002",
+      "name": "Migración Infraestructura Cloud",
+      "description": "Migración completa de servidores on-premise a AWS con alta disponibilidad",
+      "manager": "María González",
+      "managerId": "gerente2",
+      "startDate": "2024-03-01",
+      "endDate": "2024-11-30",
+      "budget": 8000000,
+      "status": "En Ejecución",
+      "progress": 90,
+      "requestStatus": null,
+      "approvalStatus": null,
+      "peps": [
+        { "id": "PEP-002-01", "description": "Análisis de Infraestructura", "budget": 1000000, "spent": 980000, "status": "LIQ" },
+        { "id": "PEP-002-02", "description": "Configuración AWS", "budget": 3000000, "spent": 2900000, "status": "LIQ" },
+        { "id": "PEP-002-03", "description": "Migración de Datos", "budget": 2500000, "spent": 2400000, "status": "LIQ" },
+        { "id": "PEP-002-04", "description": "Pruebas de Carga", "budget": 800000, "spent": 780000, "status": "LIQ" }
+      ]
+    },
+    {
+      "id": "PRJ-003",
+      "name": "Sistema CRM Salesforce",
+      "description": "Implementación de Salesforce para gestión de clientes y oportunidades comerciales",
+      "manager": "Carlos Ramírez",
+      "managerId": "gerente1",
+      "startDate": "2024-02-01",
+      "endDate": "2024-10-31",
+      "budget": 4500000,
+      "status": "En Ejecución",
+      "progress": 85,
+      "requestStatus": null,
+      "approvalStatus": null,
+      "peps": [
+        { "id": "PEP-003-01", "description": "Configuración Base", "budget": 1200000, "spent": 1150000, "status": "LIQ" },
+        { "id": "PEP-003-02", "description": "Personalización", "budget": 1800000, "spent": 1700000, "status": "LIQ" },
+        { "id": "PEP-003-03", "description": "Integración con ERP", "budget": 1000000, "spent": 950000, "status": "EJE" }
+      ]
+    },
+    {
+      "id": "PRJ-004",
+      "name": "Automatización Almacén Norte",
+      "description": "Automatización completa del almacén con robots AGV y sistema WMS integrado",
+      "manager": "Ana Torres",
+      "managerId": "gerente2",
+      "startDate": "2024-01-10",
+      "endDate": "2024-09-30",
+      "budget": 12000000,
+      "status": "En Ejecución",
+      "progress": 98,
+      "requestStatus": "Enviada",
+      "approvalStatus": "Pendiente",
+      "peps": [
+        { "id": "PEP-004-01", "description": "Ingeniería de Detalle", "budget": 1500000, "spent": 1500000, "status": "LIQ" },
+        { "id": "PEP-004-02", "description": "Adquisición Equipos", "budget": 6000000, "spent": 5980000, "status": "LIQ" },
+        { "id": "PEP-004-03", "description": "Instalación", "budget": 3000000, "spent": 2990000, "status": "LIQ" },
+        { "id": "PEP-004-04", "description": "Puesta en Marcha", "budget": 1000000, "spent": 980000, "status": "LIQ" }
+      ]
+    },
+    {
+      "id": "PRJ-005",
+      "name": "Portal Web Corporativo",
+      "description": "Desarrollo del nuevo portal web corporativo con diseño responsive y CMS integrado",
+      "manager": "Luis Fernández",
+      "managerId": "gerente1",
+      "startDate": "2024-04-01",
+      "endDate": "2024-12-15",
+      "budget": 3200000,
+      "status": "En Ejecución",
+      "progress": 92,
+      "requestStatus": "Enviada",
+      "approvalStatus": "Pendiente",
+      "peps": [
+        { "id": "PEP-005-01", "description": "Diseño UX/UI", "budget": 600000, "spent": 590000, "status": "LIQ" },
+        { "id": "PEP-005-02", "description": "Desarrollo Frontend", "budget": 1200000, "spent": 1180000, "status": "LIQ" },
+        { "id": "PEP-005-03", "description": "Desarrollo Backend", "budget": 1000000, "spent": 980000, "status": "LIQ" }
+      ]
+    },
+    {
+      "id": "PRJ-006",
+      "name": "Sistema BI y Analytics",
+      "description": "Implementación de Power BI y DataWarehouse para reportería ejecutiva",
+      "manager": "Patricia Sánchez",
+      "managerId": "gerente2",
+      "startDate": "2023-09-01",
+      "endDate": "2024-06-30",
+      "budget": 6500000,
+      "status": "Aprobado",
+      "progress": 100,
+      "requestStatus": "Enviada",
+      "approvalStatus": "Aprobado",
+      "approvalDate": "2024-03-01",
+      "peps": [
+        { "id": "PEP-006-01", "description": "Infraestructura DW", "budget": 2000000, "spent": 1980000, "status": "LIQ" },
+        { "id": "PEP-006-02", "description": "Desarrollo ETL", "budget": 2500000, "spent": 2450000, "status": "LIQ" },
+        { "id": "PEP-006-03", "description": "Dashboards BI", "budget": 1500000, "spent": 1470000, "status": "LIQ" }
+      ],
+      "pendingAction": "liquidation"
+    },
+    {
+      "id": "PRJ-007",
+      "name": "Renovación Edificio Oficinas",
+      "description": "Renovación completa del edificio de oficinas centrales con estándares LEED",
+      "manager": "Roberto Vargas",
+      "managerId": "gerente1",
+      "startDate": "2023-06-01",
+      "endDate": "2024-05-31",
+      "budget": 25000000,
+      "status": "Aprobado",
+      "progress": 100,
+      "requestStatus": "Enviada",
+      "approvalStatus": "Aprobado",
+      "approvalDate": "2024-02-28",
+      "peps": [
+        { "id": "PEP-007-01", "description": "Diseño Arquitectónico", "budget": 2000000, "spent": 1990000, "status": "LIQ" },
+        { "id": "PEP-007-02", "description": "Construcción", "budget": 18000000, "spent": 17950000, "status": "LIQ" },
+        { "id": "PEP-007-03", "description": "Sistemas MEP", "budget": 4000000, "spent": 3980000, "status": "LIQ" }
+      ],
+      "pendingAction": "liquidation"
+    },
+    {
+      "id": "PRJ-008",
+      "name": "App Móvil Ventas",
+      "description": "Desarrollo de aplicación móvil para fuerza de ventas con offline sync",
+      "manager": "Elena Morales",
+      "managerId": "gerente2",
+      "startDate": "2024-07-01",
+      "endDate": "2025-03-31",
+      "budget": 2800000,
+      "status": "En Planificación",
+      "progress": 15,
+      "requestStatus": null,
+      "approvalStatus": null,
+      "peps": [
+        { "id": "PEP-008-01", "description": "Diseño de Arquitectura", "budget": 400000, "spent": 50000, "status": "PLN" },
+        { "id": "PEP-008-02", "description": "Desarrollo iOS", "budget": 1000000, "spent": 0, "status": "PLN" },
+        { "id": "PEP-008-03", "description": "Desarrollo Android", "budget": 1000000, "spent": 0, "status": "PLN" }
+      ]
+    },
+    {
+      "id": "PRJ-009",
+      "name": "Modernización Red WAN",
+      "description": "Actualización de red WAN corporativa con SD-WAN y MPLS",
+      "manager": "Fernando Castro",
+      "managerId": "gerente1",
+      "startDate": "2024-08-01",
+      "endDate": "2025-02-28",
+      "budget": 9500000,
+      "status": "En Planificación",
+      "progress": 10,
+      "requestStatus": null,
+      "approvalStatus": null,
+      "peps": [
+        { "id": "PEP-009-01", "description": "Análisis de Red Actual", "budget": 800000, "spent": 100000, "status": "PLN" },
+        { "id": "PEP-009-02", "description": "Adquisición Equipamiento", "budget": 5000000, "spent": 0, "status": "PLN" },
+        { "id": "PEP-009-03", "description": "Implementación", "budget": 3000000, "spent": 0, "status": "PLN" }
+      ]
+    },
+    {
+      "id": "PRJ-010",
+      "name": "Sistema Gestión Documental",
+      "description": "Implementación de sistema de gestión documental con firma electrónica",
+      "manager": "Carmen Ruiz",
+      "managerId": "gerente2",
+      "startDate": "2023-03-01",
+      "endDate": "2023-12-31",
+      "budget": 4000000,
+      "status": "Cerrado",
+      "progress": 100,
+      "requestStatus": "Enviada",
+      "approvalStatus": "Aprobado",
+      "approvalDate": "2024-01-15",
+      "closureDate": "2024-01-20",
+      "peps": [
+        { "id": "PEP-010-01", "description": "Análisis y Diseño", "budget": 800000, "spent": 790000, "status": "CERR" },
+        { "id": "PEP-010-02", "description": "Desarrollo", "budget": 2000000, "spent": 1980000, "status": "CERR" },
+        { "id": "PEP-010-03", "description": "Implantación", "budget": 1000000, "spent": 980000, "status": "CERR" }
+      ]
+    },
+    {
+      "id": "PRJ-011",
+      "name": "Ciberseguridad SOC",
+      "description": "Implementación de Security Operations Center con SIEM y análisis de amenazas 24/7",
+      "manager": "Jorge Mendoza",
+      "managerId": "gerente1",
+      "startDate": "2024-05-01",
+      "endDate": "2025-01-31",
+      "budget": 7200000,
+      "status": "En Ejecución",
+      "progress": 45,
+      "requestStatus": null,
+      "approvalStatus": null,
+      "peps": [
+        { "id": "PEP-011-01", "description": "Diseño de SOC", "budget": 1000000, "spent": 950000, "status": "EJE" },
+        { "id": "PEP-011-02", "description": "Implementación SIEM", "budget": 3000000, "spent": 1200000, "status": "EJE" },
+        { "id": "PEP-011-03", "description": "Equipo y Entrenamiento", "budget": 2500000, "spent": 800000, "status": "PLN" }
+      ]
+    },
+    {
+      "id": "PRJ-012",
+      "name": "Planta Energía Solar",
+      "description": "Instalación de planta fotovoltaica de 5MW para autoconsumo industrial",
+      "manager": "Sandra Ortiz",
+      "managerId": "gerente2",
+      "startDate": "2024-06-01",
+      "endDate": "2025-04-30",
+      "budget": 18000000,
+      "status": "En Ejecución",
+      "progress": 30,
+      "requestStatus": null,
+      "approvalStatus": null,
+      "peps": [
+        { "id": "PEP-012-01", "description": "Estudios e Ingeniería", "budget": 1500000, "spent": 1400000, "status": "LIQ" },
+        { "id": "PEP-012-02", "description": "Paneles y Estructura", "budget": 10000000, "spent": 2500000, "status": "EJE" },
+        { "id": "PEP-012-03", "description": "Instalación Eléctrica", "budget": 5000000, "spent": 0, "status": "PLN" }
+      ]
+    }
+  ],
+  "users": {
+    "gerente1": { "username": "gerente1", "password": "demo123", "name": "Juan Pérez", "role": "Gerente de Proyecto", "app": "app1" },
+    "gerente2": { "username": "gerente2", "password": "demo123", "name": "María González", "role": "Gerente de Proyecto", "app": "app1" }
+  }
+}

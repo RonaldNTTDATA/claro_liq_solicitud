@@ -1,0 +1,600 @@
+<mvc:View
+	controllerName="com.demo.prototype.controller.ProjectManagement.ProjectDetail"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:uxap="sap.uxap"
+	xmlns:core="sap.ui.core"
+	xmlns:layout="sap.ui.layout"
+	displayBlock="true"
+	height="100%">
+	<uxap:ObjectPageLayout
+		id="projectDetailPage"
+		showTitleInHeaderContent="true"
+		upperCaseAnchorBar="false">
+		
+		<!-- Header Title -->
+		<uxap:headerTitle>
+			<uxap:ObjectPageDynamicHeaderTitle>
+				<uxap:expandedHeading>
+					<Title text="{detailModel>/project/code} - {detailModel>/project/name}" level="H2" />
+				</uxap:expandedHeading>
+				<uxap:snappedHeading>
+					<Title text="{detailModel>/project/code}" level="H3" />
+				</uxap:snappedHeading>
+				
+				<uxap:navigationActions>
+					<Button icon="sap-icon://nav-back" tooltip="Volver al Listado" press="onNavBack" />
+				</uxap:navigationActions>
+				
+				<uxap:actions>
+					<Button 
+						text="{i18n>btnUpdateValidations}" 
+						icon="sap-icon://refresh" 
+						press="onUpdateValidations" />
+					<Button 
+						text="{i18n>btnRequestClosure}" 
+						icon="sap-icon://accept" 
+						type="Emphasized"
+						enabled="{detailModel>/canRequestClosure}"
+						press="onRequestClosure" />
+				</uxap:actions>
+				
+				<uxap:breadcrumbs>
+					<Breadcrumbs>
+						<Link text="{i18n>breadcrumbProjects}" press="onNavBack" />
+						<Link text="{detailModel>/project/code}" />
+					</Breadcrumbs>
+				</uxap:breadcrumbs>
+			</uxap:ObjectPageDynamicHeaderTitle>
+		</uxap:headerTitle>
+
+		<!-- Header Content -->
+		<uxap:headerContent>
+			<layout:HorizontalLayout allowWrapping="true">
+				<!-- Semáforo grande -->
+				<layout:VerticalLayout class="sapUiMediumMarginEnd">
+					<Label text="{i18n>lblConsolidatedSemaphore}" />
+					<core:Icon 
+						src="{
+							path: 'detailModel>/project/semaphore',
+							formatter: '.formatter.formatSemaphoreIcon'
+						}"
+						color="{
+							path: 'detailModel>/project/semaphore',
+							formatter: '.formatter.formatSemaphoreColorCode'
+						}"
+						size="3rem"
+						tooltip="{
+							parts: [
+								'detailModel>/project/semaphore',
+								'detailModel>/project/validPepPercentage'
+							],
+							formatter: '.formatSemaphoreDetailedTooltip'
+						}" />
+					<Text text="{detailModel>/project/validPepPercentage}% PEPs Válidos" class="sapUiTinyMarginTop" />
+				</layout:VerticalLayout>
+				
+				<!-- Información del proyecto -->
+				<layout:VerticalLayout class="sapUiMediumMarginEnd">
+					<Label text="{i18n>lblManager}" />
+					<Text text="{detailModel>/project/manager}" />
+				</layout:VerticalLayout>
+				
+				<layout:VerticalLayout class="sapUiMediumMarginEnd">
+					<Label text="{i18n>lblManagement}" />
+					<Text text="{detailModel>/project/management}" />
+				</layout:VerticalLayout>
+				
+				<layout:VerticalLayout class="sapUiMediumMarginEnd">
+					<Label text="{i18n>lblStartDate}" />
+					<Text text="{
+						path: 'detailModel>/project/startDate',
+						formatter: '.formatter.formatDate'
+					}" />
+				</layout:VerticalLayout>
+				
+				<layout:VerticalLayout class="sapUiMediumMarginEnd">
+					<Label text="{i18n>lblEndDate}" />
+					<Text text="{
+						path: 'detailModel>/project/endDate',
+						formatter: '.formatter.formatDate'
+					}" />
+				</layout:VerticalLayout>
+				
+				<layout:VerticalLayout class="sapUiMediumMarginEnd">
+					<Label text="{i18n>lblStatus}" />
+					<ObjectStatus 
+						text="{detailModel>/project/status}" 
+						state="{
+							path: 'detailModel>/project/status',
+							formatter: '.formatter.formatState'
+						}" />
+				</layout:VerticalLayout>
+			</layout:HorizontalLayout>
+			
+			<!-- Message Strip dinámico -->
+			<MessageStrip 
+				visible="{= ${detailModel>/project/status} === 'Solicitado' }"
+				text="{i18n>msgProjectRequested}"
+				type="Information"
+				showIcon="true"
+				class="sapUiSmallMarginTop" />
+			
+			<MessageStrip 
+				visible="{= ${detailModel>/project/status} === 'Rechazado' }"
+				text="{i18n>msgProjectRejected}: {detailModel>/project/rejectionReason}"
+				type="Error"
+				showIcon="true"
+				class="sapUiSmallMarginTop" />
+		</uxap:headerContent>
+
+		<!-- Sections -->
+		<uxap:sections>
+			<!-- Tab: Elementos PEP -->
+			<uxap:ObjectPageSection title="{i18n>tabPEPs}" id="pepSection">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection>
+						<uxap:blocks>
+							<VBox width="100%">
+								<!-- Indicador resumen -->
+								<Toolbar>
+								<!-- Texto completo para Desktop/Tablet -->
+								<Text 
+									text="{detailModel>/pepSummary}" 
+									class="sapUiSmallMarginEnd"
+									visible="{= ${device>/system/phone} === false }" />
+								<!-- Texto corto para Móvil -->
+								<Text 
+									text="" 
+									class="sapUiSmallMarginEnd"
+									visible="{device>/system/phone}" />
+									<ToolbarSpacer />
+									<CheckBox 
+										text="{i18n>chkShowOnlyProblems}" 
+										selected="{detailModel>/filters/showOnlyProblems}"
+										select="onFilterProblems" />
+									<Button 
+										text="{i18n>btnExportPEPs}" 
+										icon="sap-icon://excel-attachment" 
+										press="onExportPEPs" />
+								</Toolbar>
+								
+								<!-- Tabla de PEPs -->
+								<ScrollContainer 
+									height="600px" 
+									width="100%" 
+									horizontal="true" 
+									vertical="false">
+									<Table
+										id="pepsTable"
+										items="{detailModel>/peps}"
+										growing="true"
+										growingThreshold="50"
+										noDataText="{i18n>msgNoData}"
+										width="auto">
+										<columns>
+											<Column width="8rem" hAlign="Center">
+												<Text text="{i18n>colConsolidatedSemaphore}" />
+											</Column>
+											<Column width="15rem">
+												<Text text="{i18n>colPEPCode}" />
+											</Column>
+											<Column width="15rem" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colPEPName}" />
+											</Column>
+											<Column width="12rem" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colProjectType}" />
+											</Column>
+											<Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colCostCenter}" />
+											</Column>
+											<Column width="6rem" hAlign="Center" minScreenWidth="Tablet" demandPopin="true">
+												<Text text="{i18n>colMovements}" />
+											</Column>
+											<Column width="6rem" hAlign="Center" minScreenWidth="Tablet" demandPopin="true">
+												<Text text="{i18n>colCommitments}" />
+											</Column>
+											<Column width="6rem" hAlign="Center" minScreenWidth="Tablet" demandPopin="true" visible="false">
+												<Text text="{i18n>colAFeC}" />
+											</Column>
+											<Column width="6rem" hAlign="Center" minScreenWidth="Tablet" demandPopin="true">
+												<Text text="{i18n>colBalance}" />
+											</Column>
+											<Column width="10rem" hAlign="End" minScreenWidth="Tablet" demandPopin="true">
+												<Text text="{i18n>colCurrentBalance}" />
+											</Column>
+											<Column width="12rem" minScreenWidth="Desktop" demandPopin="true" visible="false">
+												<Text text="{i18n>colAFeCAssociated}" />
+											</Column>
+										</columns>
+										<items>
+											<ColumnListItem type="Active" press="onPEPPress">
+												<cells>
+													<!-- Semáforo Consolidado -->
+													<core:Icon 
+														src="{
+															path: 'detailModel>consolidatedSemaphore',
+															formatter: '.formatter.formatSemaphoreIcon'
+														}"
+														color="{
+															path: 'detailModel>consolidatedSemaphore',
+															formatter: '.formatter.formatSemaphoreColorCode'
+														}"
+														size="1.5rem" />
+													
+													<!-- Código PEP -->
+													<Link text="{detailModel>code}" press="onPEPPress" />
+													
+													<!-- Nombre -->
+													<Text text="{detailModel>name}" />
+													
+													<!-- Tipo Proyecto -->
+													<Text text="{detailModel>type}" />
+													
+													<!-- Centro Costo -->
+													<Text text="{detailModel>costCenter}" />
+													
+													<!-- Semáforo Movimientos -->
+													<core:Icon 
+														src="{
+															path: 'detailModel>validations/movements',
+															formatter: '.formatter.formatValidationIcon'
+														}"
+														color="{
+															path: 'detailModel>validations/movements',
+															formatter: '.formatter.formatValidationColor'
+														}"
+														size="1.2rem"
+														tooltip="CJI3: Movimientos" />
+													
+													<!-- Semáforo Compromisos -->
+													<core:Icon 
+														src="{
+															path: 'detailModel>validations/commitments',
+															formatter: '.formatter.formatValidationIcon'
+														}"
+														color="{
+															path: 'detailModel>validations/commitments',
+															formatter: '.formatter.formatValidationColor'
+														}"
+														size="1.2rem"
+														tooltip="CJI5: Compromisos" />
+													
+													<!-- Semáforo AFeC -->
+													<core:Icon 
+														src="{
+															path: 'detailModel>validations/afec',
+															formatter: '.formatter.formatValidationIcon'
+														}"
+														color="{
+															path: 'detailModel>validations/afec',
+															formatter: '.formatter.formatValidationColor'
+														}"
+														size="1.2rem"
+														tooltip="AFeC y Norma" />
+													
+													<!-- Semáforo Saldo -->
+													<core:Icon 
+														src="{
+															path: 'detailModel>validations/balance',
+															formatter: '.formatter.formatValidationIcon'
+														}"
+														color="{
+															path: 'detailModel>validations/balance',
+															formatter: '.formatter.formatValidationColor'
+														}"
+														size="1.2rem"
+														tooltip="Saldo" />
+													
+													<!-- Saldo Actual -->
+													<ObjectNumber 
+														number="{detailModel>currentBalance}"
+														unit="PEN"
+														state="{
+															path: 'detailModel>currentBalance',
+															formatter: '.formatter.formatBalanceState'
+														}" />
+													
+													<!-- AFeC Asociado -->
+													<Link text="{detailModel>afecId}" />
+												</cells>
+											</ColumnListItem>
+										</items>
+									</Table>
+								</ScrollContainer>
+							</VBox>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Tab: Compromisos -->
+			<uxap:ObjectPageSection title="{i18n>tabCommitments}" id="commitmentsSection">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection>
+						<uxap:blocks>
+							<VBox width="100%">
+								<!-- Filtros -->
+								<Toolbar>
+									<!-- ComboBox solo en Desktop/Tablet -->
+									<ComboBox 
+										id="filterDocType"
+										placeholder="{i18n>filterDocType}"
+										selectedKey="{detailModel>/commitmentFilters/docType}"
+										change="onFilterCommitments"
+										visible="{= ${device>/system/phone} === false }">
+										<core:Item key="" text="Todos" />
+										<core:Item key="SolPed" text="Solicitud de Pedido" />
+										<core:Item key="Pedido" text="Pedido" />
+									</ComboBox>
+									<!-- Input PEP siempre visible -->
+									<Input 
+										placeholder="{i18n>filterPEP}"
+										value="{detailModel>/commitmentFilters/pep}"
+										submit="onFilterCommitments"
+										width="{= ${device>/system/phone} ? '50%' : 'auto' }" />
+									<!-- CheckBox siempre visible, texto corto en móvil -->
+									<CheckBox 
+										text="{= ${device>/system/phone} ? 'Pendientes' : ${i18n>chkShowOnlyPending} }" 
+										selected="{detailModel>/commitmentFilters/showOnlyPending}"
+										select="onFilterCommitments" />
+									<ToolbarSpacer />
+									<!-- Summary text solo en Desktop/Tablet -->
+									<Text 
+										text="{detailModel>/commitmentSummary}" 
+										class="sapUiSmallMarginEnd"
+										visible="{= ${device>/system/phone} === false }" />
+									<!-- Botón Export solo en Desktop/Tablet -->
+									<Button 
+										text="{i18n>btnExportCommitments}" 
+										icon="sap-icon://excel-attachment" 
+										press="onExportCommitments"
+										visible="{= ${device>/system/phone} === false }" />
+								</Toolbar>
+								
+								<!-- Tabla de Compromisos -->
+								<ScrollContainer 
+									height="600px" 
+									width="100%" 
+									horizontal="true" 
+									vertical="false">
+									<Table
+										id="commitmentsTable"
+										items="{detailModel>/commitments}"
+										growing="true"
+										growingThreshold="50"
+										noDataText="{i18n>msgNoData}"
+										width="auto">
+										<columns>
+											<Column width="8rem">
+												<Text text="{i18n>colDocType}" />
+											</Column>
+											<Column width="10rem">
+												<Text text="{i18n>colDocReference}" />
+											</Column>
+											<Column width="6rem" minScreenWidth="Tablet" demandPopin="true">
+												<Text text="{i18n>colPosition}" />
+											</Column>
+											<Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colPEP}" />
+											</Column>
+											<Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colSupplier}" />
+											</Column>
+											<Column width="15rem" minScreenWidth="Tablet" demandPopin="true">
+												<Text text="{i18n>colSupplierName}" />
+											</Column>
+											<Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colMaterial}" />
+											</Column>
+											<Column width="8rem" minScreenWidth="Tablet" demandPopin="true">
+												<Text text="{i18n>colDeliveryDate}" />
+											</Column>
+											<Column width="6rem" hAlign="Center" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colFinalEntry}" />
+											</Column>
+											<Column width="10rem" hAlign="End" minScreenWidth="Tablet" demandPopin="true">
+												<Text text="{i18n>colAmount}" />
+											</Column>
+											<Column width="10rem" hAlign="End" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colEMAmount}" />
+											</Column>
+											<Column width="10rem" hAlign="End" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colRFAmount}" />
+											</Column>
+											<Column width="8rem" hAlign="Center" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colAcceptance}" />
+											</Column>
+											<Column width="8rem" hAlign="Center" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colInvoicing}" />
+											</Column>
+										</columns>
+										<items>
+											<ColumnListItem type="Active" press="onCommitmentPress">
+												<cells>
+													<!-- Tipo Documento -->
+													<Text text="{detailModel>documentType}" />
+													
+													<!-- Documento Referencia -->
+													<Link text="{detailModel>documentReference}" press="onCommitmentPress" />
+													
+													<!-- Posición -->
+													<Text text="{detailModel>positionReference}" />
+													
+													<!-- PEP -->
+													<Text text="{detailModel>pepCode}" />
+													
+													<!-- Acreedor -->
+													<Text text="{detailModel>supplierCode}" />
+													
+													<!-- Nombre Acreedor -->
+													<Text text="{detailModel>supplierName}" />
+													
+													<!-- Material -->
+													<Text text="{detailModel>material}" />
+													
+													<!-- Fecha Entrega -->
+													<Text text="{
+														path: 'detailModel>deliveryDate',
+														formatter: '.formatter.formatDate'
+													}" />
+													
+													<!-- Entrega Final -->
+													<core:Icon 
+														src="{
+															path: 'detailModel>entryFinal',
+															formatter: '.formatter.formatBooleanIcon'
+														}"
+														color="{
+															path: 'detailModel>entryFinal',
+															formatter: '.formatter.formatBooleanColor'
+														}" />
+													
+													<!-- Importe -->
+													<ObjectNumber 
+														number="{detailModel>amountSoles}"
+														unit="PEN" />
+													
+													<!-- Importe EM -->
+													<ObjectNumber 
+														number="{detailModel>amountSolesEM}"
+														unit="PEN" />
+													
+													<!-- Importe RF -->
+													<ObjectNumber 
+														number="{detailModel>amountSolesRF}"
+														unit="PEN" />
+													
+													<!-- % Aceptación -->
+													<ProgressIndicator 
+														percentValue="{detailModel>acceptancePercentage}"
+														displayValue="{detailModel>acceptancePercentage}%"
+														state="{
+															path: 'detailModel>acceptancePercentage',
+															formatter: '.formatter.formatPercentageState'
+														}" />
+													
+													<!-- % Facturación -->
+													<ProgressIndicator 
+														percentValue="{detailModel>invoicePercentage}"
+														displayValue="{detailModel>invoicePercentage}%"
+														state="{
+															path: 'detailModel>invoicePercentage',
+															formatter: '.formatter.formatPercentageState'
+														}" />
+												</cells>
+											</ColumnListItem>
+										</items>
+									</Table>
+								</ScrollContainer>
+							</VBox>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+
+			<!-- Tab: Historial de Solicitudes -->
+			<uxap:ObjectPageSection title="{i18n>tabHistory}" id="historySection">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection>
+						<uxap:blocks>
+							<VBox width="100%">
+								<Toolbar>
+									<Title text="{i18n>historyTitle}" level="H4" />
+									<ToolbarSpacer />
+									<Button 
+										text="{i18n>btnExportHistory}" 
+										icon="sap-icon://pdf-attachment" 
+										press="onExportHistory" />
+								</Toolbar>
+								
+								<!-- Timeline de solicitudes -->
+								<List
+									id="historyList"
+									items="{detailModel>/requestHistory}"
+									noDataText="{i18n>msgNoHistory}">
+									<CustomListItem>
+										<VBox class="sapUiSmallMargin">
+											<HBox>
+												<core:Icon 
+													src="{
+														path: 'detailModel>status',
+														formatter: '.formatter.formatRequestIcon'
+													}"
+													color="{
+														path: 'detailModel>status',
+														formatter: '.formatter.formatRequestColor'
+													}"
+													size="2rem"
+													class="sapUiSmallMarginEnd" />
+												<VBox>
+													<HBox>
+														<ObjectStatus 
+															text="{detailModel>status}"
+															state="{
+																path: 'detailModel>status',
+																formatter: '.formatter.formatState'
+															}"
+															class="sapUiTinyMarginEnd" />
+														<Text text="{
+															path: 'detailModel>requestDate',
+															formatter: '.formatter.formatDateTime'
+														}" />
+													</HBox>
+													<Text text="{i18n>lblRequestingUser}: {detailModel>requestingUserName}" class="sapUiTinyMarginTop" />
+													<Text 
+														text="{i18n>lblRejectionReason}: {detailModel>rejectionReason}"
+														visible="{= ${detailModel>status} === 'Rechazado' }"
+														class="sapUiTinyMarginTop" />
+													<Link 
+														text="{i18n>linkViewSnapshot}"
+														press="onViewSnapshot"
+														class="sapUiTinyMarginTop" />
+												</VBox>
+											</HBox>
+										</VBox>
+									</CustomListItem>
+								</List>
+							</VBox>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+			
+			<!-- Sección de Adjuntos -->
+			<uxap:ObjectPageSection title="Adjuntos" id="attachmentsSection">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection>
+						<uxap:blocks>
+							<VBox class="sapUiSmallMargin">
+								<HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBottom">
+									<Label text="Archivos adjuntos ({= ${detailModel>/attachments}.length })" design="Bold" />
+									<Button
+										text="Agregar Archivo"
+										icon="sap-icon://add"
+										type="Emphasized"
+										press="onAttachFiles" />
+								</HBox>
+								
+								<List
+									items="{detailModel>/attachments}"
+									noDataText="No hay archivos adjuntos para este proyecto">
+									<StandardListItem
+										title="{detailModel>fileName}"
+										description="Tamaño: {detailModel>fileSize} | Fecha: {path: 'detailModel>uploadDate', formatter: '.formatter.formatDateTime'}"
+										icon="{path: 'detailModel>mimeType', formatter: '.formatter.formatFileIcon'}"
+										type="Active"
+										press="onDownloadAttachment">
+										<customData>
+											<core:CustomData key="index" value="{detailModel>index}" />
+										</customData>
+									</StandardListItem>
+								</List>
+							</VBox>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+		</uxap:sections>
+	</uxap:ObjectPageLayout>
+</mvc:View>

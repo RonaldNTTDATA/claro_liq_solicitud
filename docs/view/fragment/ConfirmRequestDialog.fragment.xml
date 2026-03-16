@@ -1,0 +1,80 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:layout="sap.ui.layout">
+	<Dialog
+		title="Solicitar Cierre de Proyecto"
+		icon="sap-icon://question-mark"
+		type="Message"
+		state="Information"
+		contentWidth="500px">
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<Text 
+					text="Está a punto de solicitar el cierre del proyecto {dialogModel>/code} - {dialogModel>/name}. Los indicadores de validación de todos los elementos PEP se guardarán en este momento."
+					class="sapUiSmallMarginBottom" />
+
+				<Panel headerText="Resumen" class="sapUiSmallMarginTop sapUiSmallMarginBottom">
+					<content>
+						<layout:form.SimpleForm
+							editable="false"
+							layout="ResponsiveGridLayout"
+							labelSpanXL="5"
+							labelSpanL="5"
+							labelSpanM="5"
+							emptySpanXL="0"
+							emptySpanL="0"
+							emptySpanM="0"
+							columnsXL="1"
+							columnsL="1"
+							columnsM="1">
+							<layout:content>
+								<Label text="Código" />
+								<Text text="{dialogModel>/code}" />
+
+								<Label text="Nombre" />
+								<Text text="{dialogModel>/name}" />
+
+								<Label text="Gerente" />
+								<Text text="{dialogModel>/manager}" />
+
+								<Label text="Cantidad PEPs" />
+								<Text text="{dialogModel>/pepCount}" />
+
+								<Label text="Estado Actual" />
+								<ObjectStatus text="{dialogModel>/status}" state="Information" />
+
+								<Label text="Semáforo Consolidado" />
+								<HBox alignItems="Center">
+									<core:Icon
+										src="sap-icon://status-positive"
+										color="#107E3E"
+										size="1.5rem" />
+									<Text text="{dialogModel>/semaphore}" class="sapUiTinyMarginBegin" />
+								</HBox>
+							</layout:content>
+						</layout:form.SimpleForm>
+					</content>
+				</Panel>
+
+				<MessageStrip
+					text="⚠️ Una vez enviada la solicitud, no podrá modificarla hasta que sea procesada por el área de finanzas."
+					type="Warning"
+					showIcon="true"
+					class="sapUiSmallMarginTop" />
+			</VBox>
+		</content>
+		<beginButton>
+			<Button
+				text="Confirmar Solicitud"
+				type="Emphasized"
+				icon="sap-icon://accept"
+				press="onConfirmRequest" />
+		</beginButton>
+		<endButton>
+			<Button
+				text="Cancelar"
+				press="onCancelRequest" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

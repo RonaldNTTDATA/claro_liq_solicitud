@@ -1,0 +1,283 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:layout="sap.ui.layout"
+	xmlns:f="sap.f">
+	<Dialog
+		title="Validaciones - {dialogModel>/pep/code}"
+		contentWidth="800px"
+		contentHeight="600px"
+		draggable="true"
+		resizable="true">
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<Text text="{dialogModel>/pep/name}" class="sapUiSmallMarginBottom" />
+				
+				<!-- Panel 1: Validación de Movimientos (CJI3) -->
+				<Panel
+					headerText="Validación de Movimientos (CJI3)"
+					expandable="true"
+					expanded="true"
+					class="sapUiSmallMarginBottom">
+					<content>
+						<VBox>
+							<HBox alignItems="Center" class="sapUiTinyMarginBottom">
+								<core:Icon
+									src="{= ${dialogModel>/validation/movements} === 'OK' ? 'sap-icon://accept' : 'sap-icon://error' }"
+									color="{= ${dialogModel>/validation/movements} === 'OK' ? '#107E3E' : '#B00' }"
+									size="1.5rem" />
+								<Text text="{= ${dialogModel>/validation/movements} === 'OK' ? 'Validación correcta' : 'Errores encontrados' }" class="sapUiTinyMarginBegin" />
+							</HBox>
+							
+							<Table
+								items="{dialogModel>/movements}"
+								visible="{= ${dialogModel>/movements}.length > 0 }">
+								<columns>
+									<Column width="12%">
+										<Text text="Cuenta" />
+									</Column>
+									<Column width="15%">
+										<Text text="Centro Costo" />
+									</Column>
+									<Column width="18%">
+										<Text text="Clase Costo" />
+									</Column>
+									<Column width="15%">
+										<Text text="Importe" />
+									</Column>
+									<Column width="10%">
+										<Text text="Estado" />
+									</Column>
+									<Column>
+										<Text text="Mensaje" />
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{dialogModel>account}" />
+											<Text text="{dialogModel>costCenter}" />
+											<Text text="{dialogModel>costClass}" />
+											<ObjectNumber
+												number="{dialogModel>amount}"
+												unit="PEN" />
+											<core:Icon
+												src="{= ${dialogModel>status} === 'OK' ? 'sap-icon://accept' : 'sap-icon://error' }"
+												color="{= ${dialogModel>status} === 'OK' ? '#107E3E' : '#B00' }" />
+											<Text text="{dialogModel>message}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+							
+							<MessageStrip
+								text="{= ${dialogModel>/validation/movementMessages} ? ${dialogModel>/validation/movementMessages}[0] : '' }"
+								type="Error"
+								showIcon="true"
+								visible="{= ${dialogModel>/validation/movements} === 'Error' }"
+								class="sapUiTinyMarginTop" />
+						</VBox>
+					</content>
+				</Panel>
+
+				<!-- Panel 2: Validación de Compromisos (CJI5) -->
+				<Panel
+					headerText="Validación de Compromisos (CJI5)"
+					expandable="true"
+					expanded="false"
+					class="sapUiSmallMarginBottom">
+					<content>
+						<VBox>
+							<HBox alignItems="Center" class="sapUiTinyMarginBottom">
+								<core:Icon
+									src="{= ${dialogModel>/validation/commitments} === 'OK' ? 'sap-icon://accept' : 'sap-icon://error' }"
+									color="{= ${dialogModel>/validation/commitments} === 'OK' ? '#107E3E' : '#B00' }"
+									size="1.5rem" />
+								<Text text="{= ${dialogModel>/validation/commitments} === 'OK' ? 'Sin compromisos pendientes' : ${dialogModel>/commitments}.length + ' compromisos pendientes' }" class="sapUiTinyMarginBegin" />
+							</HBox>
+							
+							<Table
+								items="{dialogModel>/commitments}"
+								visible="{= ${dialogModel>/commitments}.length > 0 }">
+								<columns>
+									<Column width="20%">
+										<Text text="Documento" />
+									</Column>
+									<Column width="10%">
+										<Text text="Pos." />
+									</Column>
+									<Column>
+										<Text text="Material" />
+									</Column>
+									<Column width="20%">
+										<Text text="Acreedor" />
+									</Column>
+									<Column width="15%">
+										<Text text="Importe" />
+									</Column>
+									<Column width="15%">
+										<Text text="Falta" />
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{dialogModel>documentNumber}" />
+											<Text text="{dialogModel>position}" />
+											<Text text="{dialogModel>material}" />
+											<Text text="{dialogModel>supplier}" />
+											<ObjectNumber
+												number="{dialogModel>amount}"
+												unit="PEN" />
+											<Text text="{dialogModel>missing}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+
+							<MessageStrip
+								text="{= ${dialogModel>/validation/commitmentMessages} ? ${dialogModel>/validation/commitmentMessages}[0] : '' }"
+								type="Warning"
+								showIcon="true"
+								visible="{= ${dialogModel>/validation/commitments} === 'Error' }"
+								class="sapUiTinyMarginTop" />
+						</VBox>
+					</content>
+				</Panel>
+
+				<!-- Panel 3: Validación de AFeC -->
+				<Panel
+					headerText="Validación de AFeC y Norma de Liquidación"
+					expandable="true"
+					expanded="false"
+					class="sapUiSmallMarginBottom">
+					<content>
+						<VBox>
+							<HBox alignItems="Center" class="sapUiTinyMarginBottom">
+								<core:Icon
+									src="{= ${dialogModel>/validation/afec} === 'OK' ? 'sap-icon://accept' : 'sap-icon://error' }"
+									color="{= ${dialogModel>/validation/afec} === 'OK' ? '#107E3E' : '#B00' }"
+									size="1.5rem" />
+								<Text text="{= ${dialogModel>/validation/afec} === 'OK' ? 'AFeC configurado correctamente' : 'Problemas con configuración AFeC' }" class="sapUiTinyMarginBegin" />
+							</HBox>
+
+							<layout:form.SimpleForm
+								editable="false"
+								layout="ResponsiveGridLayout"
+								labelSpanXL="4"
+								labelSpanL="4"
+								labelSpanM="4"
+								emptySpanXL="0"
+								emptySpanL="0"
+								emptySpanM="0"
+								columnsXL="1"
+								columnsL="1"
+								columnsM="1">
+								<layout:content>
+									<Label text="Número AFeC" />
+									<Text text="{dialogModel>/pep/afecId}" />
+
+									<Label text="Descripción" />
+									<Text text="{dialogModel>/pep/afecDescription}" />
+
+									<Label text="Valor AFeC" />
+									<ObjectNumber
+										number="{dialogModel>/pep/afecValue}"
+										unit="PEN" />
+
+									<Label text="% Liquidación" />
+									<Text text="100%" />
+
+									<Label text="Cuenta Receptora" />
+									<Text text="1540101001 - Activos Fijos - Infraestructura" />
+								</layout:content>
+							</layout:form.SimpleForm>
+
+							<MessageStrip
+								text="{= ${dialogModel>/validation/afecMessages} ? ${dialogModel>/validation/afecMessages}[0] : '' }"
+								type="Error"
+								showIcon="true"
+								visible="{= ${dialogModel>/validation/afec} === 'Error' }"
+								class="sapUiTinyMarginTop" />
+						</VBox>
+					</content>
+				</Panel>
+
+				<!-- Panel 4: Validación de Saldo -->
+				<Panel
+					headerText="Validación de Saldo"
+					expandable="true"
+					expanded="false"
+					class="sapUiSmallMarginBottom">
+					<content>
+						<VBox>
+							<HBox alignItems="Center" class="sapUiTinyMarginBottom">
+								<core:Icon
+									src="{= ${dialogModel>/validation/balance} === 'OK' ? 'sap-icon://accept' : 'sap-icon://error' }"
+									color="{= ${dialogModel>/validation/balance} === 'OK' ? '#107E3E' : '#B00' }"
+									size="1.5rem" />
+								<Text text="{= ${dialogModel>/validation/balance} === 'OK' ? 'Saldo en 0.00' : 'Saldo pendiente' }" class="sapUiTinyMarginBegin" />
+							</HBox>
+
+							<HBox justifyContent="SpaceBetween" class="sapUiSmallMarginBottom">
+								<Label text="Saldo Total:" design="Bold" />
+								<ObjectNumber
+									number="{dialogModel>/validation/balanceDetail/currentBalance}"
+									unit="PEN"
+									state="{= ${dialogModel>/validation/balanceDetail/currentBalance} === 0 ? 'Success' : 'Error' }" />
+							</HBox>
+
+							<Table
+								items="{dialogModel>/validation/balanceDetail/breakdown}">
+								<columns>
+									<Column>
+										<Text text="Clase Costo" />
+									</Column>
+									<Column>
+										<Text text="Descripción" />
+									</Column>
+									<Column>
+										<Text text="Saldo" />
+									</Column>
+									<Column width="10%">
+										<Text text="Estado" />
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{dialogModel>costClass}" />
+											<Text text="{dialogModel>description}" />
+											<ObjectNumber
+												number="{dialogModel>amount}"
+												unit="PEN"
+												state="{= ${dialogModel>amount} === 0 ? 'Success' : 'Error' }" />
+											<core:Icon
+												src="{= ${dialogModel>status} === 'OK' ? 'sap-icon://accept' : 'sap-icon://error' }"
+												color="{= ${dialogModel>status} === 'OK' ? '#107E3E' : '#B00' }" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+
+							<MessageStrip
+								text="Tolerancia: ±0.01 PEN"
+								type="Information"
+								showIcon="true"
+								class="sapUiTinyMarginTop" />
+						</VBox>
+					</content>
+				</Panel>
+			</VBox>
+		</content>
+		<buttons>
+			<Button
+				text="Abrir en SAP"
+				icon="sap-icon://open-command-field"
+				press="onOpenInSAP" />
+			<Button
+				text="Cerrar"
+				press="onCloseValidationDialog" />
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

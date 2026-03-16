@@ -1,0 +1,69 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:unified="sap.ui.unified">
+	<Dialog
+		id="attachmentsDialog"
+		title="Adjuntar Sustentos - {attachmentModel>/projectCode}"
+		contentWidth="600px"
+		contentHeight="500px"
+		resizable="true"
+		draggable="true">
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<MessageStrip
+					text="Puede adjuntar archivos PDF, Excel o Word como sustento de la solicitud de cierre"
+					type="Information"
+					showIcon="true"
+					class="sapUiSmallMarginBottom" />
+				
+				<!-- File Uploader -->
+				<Label text="Seleccionar archivo:" class="sapUiTinyMarginBottom" />
+				
+				<!-- Simple FileUploader -->
+				<HBox alignItems="Center" class="sapUiSmallMarginTop">
+					<unified:FileUploader
+						id="fileUploader"
+						name="fileUpload"
+						uploadUrl=""
+						placeholder="Seleccione un archivo PDF, Excel o Word"
+						fileType="pdf,xlsx,xls,docx,doc"
+						mimeType="application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+						maximumFileSize="10"
+						change=".onFileSelected"
+						width="100%" />
+					<Button
+						icon="sap-icon://add"
+						type="Emphasized"
+						tooltip="Agregar archivo"
+						press=".onAddAttachment"
+						class="sapUiTinyMarginBegin" />
+				</HBox>
+				
+				<!-- Lista de archivos adjuntos -->
+				<VBox class="sapUiSmallMarginTop">
+					<Label text="Archivos adjuntos ({= ${attachmentModel>/attachments}.length }):" class="sapUiTinyMarginBottom" design="Bold" />
+					<List
+						items="{attachmentModel>/attachments}"
+						noDataText="No hay archivos adjuntos">
+						<StandardListItem
+							title="{attachmentModel>fileName}"
+							description="{attachmentModel>fileSize}"
+							icon="sap-icon://document"
+							type="Active"
+							press=".onDownloadAttachment">
+							<customData>
+								<core:CustomData key="index" value="{attachmentModel>index}" />
+							</customData>
+						</StandardListItem>
+					</List>
+				</VBox>
+			</VBox>
+		</content>
+		<beginButton>
+			<Button
+				text="Cerrar"
+				press=".onCloseAttachmentsDialog" />
+		</beginButton>
+	</Dialog>
+</core:FragmentDefinition>

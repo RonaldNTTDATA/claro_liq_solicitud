@@ -1,0 +1,327 @@
+/* CSS Global - Claro Perú Brand Identity */
+
+/* === Colores Corporativos === */
+:root {
+	/* Colores de Fondo */
+	--claro-white: #FFFFFF;
+	--claro-red: #E4002B;
+	--claro-gray-light: #F5F5F5;
+	--claro-gray-medium: #E6E6E6;
+	--claro-black: #000000;
+	--claro-gray-dark: #333333;
+	
+	/* Colores de Texto */
+	--text-primary: #000000;
+	--text-secondary: #333333;
+	--text-descriptive: #666666;
+	--text-on-red: #FFFFFF;
+	--text-link: #0066CC;
+}
+
+/* === Tipografía Base === */
+html {
+	font-family: 'ClaroSans', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+	font-size: 16px;
+}
+
+body {
+	font-family: 'ClaroSans', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+	color: var(--text-primary);
+	line-height: 1.5;
+}
+
+/* === Headings === */
+h1, .sapMTitle.sapMTitleStyleH1 {
+	font-size: 32px;
+	font-weight: 700;
+	color: var(--text-primary);
+	line-height: 1.2;
+}
+
+h2, .sapMTitle.sapMTitleStyleH2 {
+	font-size: 24px;
+	font-weight: 600;
+	color: var(--text-primary);
+	line-height: 1.2;
+}
+
+h3, .sapMTitle.sapMTitleStyleH3 {
+	font-size: 20px;
+	font-weight: 600;
+	color: var(--text-secondary);
+	line-height: 1.2;
+}
+
+/* === Brand Colors en Controles SAPUI5 === */
+
+/* Barra de Navegación Principal - Rojo Claro */
+.sapUshellShellHead {
+	background-color: var(--claro-red) !important;
+}
+
+.sapUshellShellHead .sapMBarChild {
+	color: var(--text-on-red) !important;
+}
+
+/* DynamicPage Header */
+.sapFDynamicPageTitle {
+	background-color: var(--claro-white);
+}
+
+.sapFDynamicPageTitleMainContent .sapMTitle {
+	color: var(--text-primary);
+}
+
+/* Botones Primarios - Rojo Claro */
+.sapMBtn.sapMBtnEmphasized {
+	background-color: var(--claro-red) !important;
+	border-color: var(--claro-red) !important;
+	color: var(--text-on-red) !important;
+	font-weight: 600;
+}
+
+.sapMBtn.sapMBtnEmphasized:hover {
+	background-color: #C40024 !important;
+	border-color: #C40024 !important;
+}
+
+.sapMBtn.sapMBtnEmphasized .sapMBtnInner {
+	font-weight: 600;
+}
+
+/* Enlaces Destacados - Rojo Claro */
+.sapMLnk,
+.sapMLink {
+	color: var(--claro-red) !important;
+	font-weight: 500;
+}
+
+.sapMLnk:hover,
+.sapMLink:hover {
+	color: #C40024 !important;
+	text-decoration: underline;
+}
+
+/* ObjectStatus con colores corporativos */
+.sapMObjStatusSuccess {
+	color: #107E3E !important;
+}
+
+.sapMObjStatusWarning {
+	color: #E76500 !important;
+}
+
+.sapMObjStatusError {
+	color: var(--claro-red) !important;
+}
+
+/* Tablas */
+.sapMListTbl {
+	border: 1px solid var(--claro-gray-medium);
+}
+
+.sapMListTblHeader {
+	background-color: var(--claro-gray-light);
+	font-weight: 600;
+	color: var(--text-secondary);
+}
+
+.sapMListTblRow:hover {
+	background-color: var(--claro-gray-light) !important;
+}
+
+/* Semáforos Custom */
+.semaphore-icon {
+	font-size: 1.25rem;
+}
+
+.semaphore-verde {
+	color: #107E3E;
+}
+
+.semaphore-ambar {
+	color: #E76500;
+}
+
+.semaphore-rojo {
+	color: var(--claro-red);
+}
+
+/* Message Strip */
+.sapMMsgStripError {
+	background-color: #FFE5E5;
+	border-left: 4px solid var(--claro-red);
+}
+
+.sapMMsgStripWarning {
+	background-color: #FFF4E5;
+	border-left: 4px solid #E76500;
+}
+
+.sapMMsgStripSuccess {
+	background-color: #E5F5EB;
+	border-left: 4px solid #107E3E;
+}
+
+.sapMMsgStripInformation {
+	background-color: #E5F1FA;
+	border-left: 4px solid var(--text-link);
+}
+
+/* Filtros Panel */
+.sapUiRespGrid .sapMLabel {
+	font-weight: 600;
+	color: var(--text-secondary);
+	font-size: 12px;
+}
+
+/* Toolbar */
+.sapMTB {
+	background-color: var(--claro-white);
+	border-bottom: 1px solid var(--claro-gray-medium);
+}
+
+.sapMTBSeparator {
+	background-color: var(--claro-gray-medium);
+}
+
+/* Login Screen */
+.login-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	background: linear-gradient(135deg, var(--claro-gray-light) 0%, var(--claro-white) 100%);
+}
+
+.login-card {
+	background-color: var(--claro-white);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+	padding: 3rem;
+	text-align: center;
+	max-width: 400px;
+	width: 100%;
+}
+
+.login-logo {
+	width: 80px;
+	height: 80px;
+	margin-bottom: 1.5rem;
+}
+
+.login-title {
+	font-size: 24px;
+	font-weight: 700;
+	color: var(--text-primary);
+	margin-bottom: 1rem;
+}
+
+.login-message {
+	font-size: 14px;
+	color: var(--text-secondary);
+	margin-bottom: 2rem;
+}
+
+.login-spinner {
+	margin-top: 1.5rem;
+}
+
+/* Progress Indicator */
+.sapMPI {
+	height: 8px;
+}
+
+.sapMPIValueGreaterHalf .sapMPIBar {
+	background-color: #107E3E;
+}
+
+.sapMPIValueLessHalf .sapMPIBar {
+	background-color: #E76500;
+}
+
+/* Badge/ObjectStatus */
+.sapMObjectStatus {
+	font-weight: 600;
+	font-size: 14px;
+}
+
+/* Tooltips */
+.sapMPopover .sapMPopoverCont {
+	padding: 0.5rem 0.75rem;
+}
+
+/* Responsive Grid */
+.sapUiRespGrid {
+	padding: 1rem;
+}
+
+.sapUiRespGridSpanXL6,
+.sapUiRespGridSpanL6,
+.sapUiRespGridSpanM6,
+.sapUiRespGridSpanS12 {
+	padding: 0.5rem;
+}
+
+/* Paginación */
+.sapMListPaginator {
+	padding: 0.75rem;
+	background-color: var(--claro-white);
+	border-top: 1px solid var(--claro-gray-medium);
+}
+
+/* BusyIndicator */
+.sapUiLocalBusyIndicator {
+	background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* ObjectHeader */
+.sapMOH {
+	padding: 1rem;
+	background-color: var(--claro-white);
+}
+
+.sapMOHTitle {
+	font-size: 24px;
+	font-weight: 700;
+	color: var(--text-primary);
+}
+
+.sapMOHIntro {
+	font-size: 14px;
+	color: var(--text-secondary);
+}
+
+/* IconTabBar */
+.sapMITH {
+	background-color: var(--claro-white);
+	border-bottom: 2px solid var(--claro-gray-medium);
+}
+
+.sapMITBSelected .sapMITBText {
+	color: var(--claro-red) !important;
+}
+
+.sapMITBFilterSelected {
+	border-bottom: 3px solid var(--claro-red) !important;
+}
+
+/* Dialog */
+.sapMDialog {
+	border-radius: 8px;
+}
+
+.sapMDialogTitle {
+	background-color: var(--claro-red);
+	color: var(--text-on-red);
+	font-weight: 700;
+}
+
+/* Ajustes para interfaces densas */
+@media (min-width: 1024px) {
+	.sapUiSizeCompact .sapMText,
+	.sapUiSizeCompact .sapMLabel {
+		font-size: 14px;
+	}
+}

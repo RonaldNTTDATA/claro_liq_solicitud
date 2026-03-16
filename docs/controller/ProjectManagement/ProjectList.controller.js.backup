@@ -1,0 +1,318 @@
+sap.ui.define([
+	"com/demo/prototype/controller/BaseController",
+	"sap/ui/model/json/JSONModel",
+	"com/demo/prototype/service/ProjectService",
+	"com/demo/prototype/service/ValidationService",
+	"com/demo/prototype/service/AuditService",
+	"com/demo/prototype/model/formatter"
+], function (BaseController, JSONModel, ProjectService, ValidationService, AuditService, formatter) {
+	"use strict";
+
+	return BaseController.extend("com.demo.prototype.controller.ProjectManagement.ProjectList", {
+		
+		formatter: formatter,
+
+		onInit: function () {
+			// Crear modelo local para proyectos
+			const oModel = new JSONModel({
+				projects: [],
+				allProjects: [],
+				rejectedCount: 0,
+				projectCount: "",
+				filters: {
+					code: "",
+					status: [],
+					management: ""
+				},
+				statusOptions: [
+					{ key: "En Proceso", text: "En Proceso" },
+					{ key: "Solicitado", text: "Solicitado" },
+					{ key: "Rechazado", text: "Rechazado" }
+				],
+				managementOptions: [
+					{ key: "", text: "Todos" },
+					{ key: "Gerencia de Infraestructura", text: "Gerencia de Infraestructura" },
+					{ key: "Gerencia de Tecnología", text: "Gerencia de Tecnología" },
+					{ key: "Gerencia de Operaciones", text: "Gerencia de Operaciones" }
+				]
+			});
+			this.setModel(oModel, "projectModel");
+
+			// Cargar proyectos iniciales
+			this._loadProjects();
+		},
+
+		/**
+		 * Carga proyectos del gerente autenticado
+		 * @private
+		 */
+		_loadProjects: function () {
+			const oAppModel = this.getModel("appModel");
+			const sManagerId = oAppModel.getProperty("/user/id");
+			
+			this.getView().setBusy(true);
+
+			ProjectService.getProjectsByManager(sManagerId).then((aProjects) => {
+				const oModel = this.getModel("projectModel");
+				oModel.setProperty("/projects", aProjects);
+				oModel.setProperty("/allProjects", aProjects);
+				
+				this._updateRejectedCount();
+				this._updateProjectCount(aProjects.length);
+				
+				this.getView().setBusy(false);
+			}).catch((oError) => {
+				this.getView().setBusy(false);
+				this.showErrorMessage("Error al cargar proyectos: " + oError.message);
+			});
+		},
+
+		/**
+		 * Actualiza el contador de proyectos rechazados
+		 * @private
+		 */
+		_updateRejectedCount: function () {
+			const oModel = this.getModel("projectModel");
+			const aProjects = oModel.getProperty("/projects");
+			const iRejectedCount = aProjects.filter(p => p.status === "Rechazado").length;
+			oModel.setProperty("/rejectedCount", iRejectedCount);
+		},
+
+		/**
+		 * Actualiza el contador de proyectos
+		 * @private
+		 * @param {number} iCount - Cantidad de proyectos
+		 */
+		_updateProjectCount: function (iCount) {
+			const oModel = this.getModel("projectModel");
+			const sText = iCount + " proyecto" + (iCount !== 1 ? "s" : "");
+			oModel.setProperty("/projectCount", sText);
+		},
+
+		/**
+		 * Handler para el botón Refresh
+		 */
+		onRefresh: function () {
+			const oAppModel = this.getModel("appModel");
+			const sManagerId = oAppModel.getProperty("/user/id");
+			const sUserId = oAppModel.getProperty("/user/id");
+			const sUserName = oAppModel.getProperty("/user/name");
+			
+			this.getView().setBusy(true);
+
+			// Recalcular semáforos
+			ValidationService.recalculateAllSemaphores(sManagerId).then((aProjects) => {
+				const oModel = this.getModel("projectModel");
+				oModel.setProperty("/projects", aProjects);
+				oModel.setProperty("/allProjects", aProjects);
+				
+				this._updateRejectedCount();
+				this._updateProjectCount(aProjects.length);
+				
+				// Registrar en auditoría
+				AuditService.logAction(
+					"ALL",
+					"Datos actualizados desde listado",
+					sUserId,
+					sUserName
+				);
+				
+				this.showSuccessMessage(this.getResourceBundle().getText("msgDataUpdated"));
+				this.getView().setBusy(false);
+			}).catch((oError) => {
+				this.getView().setBusy(false);
+				this.showErrorMessage("Error al actualizar datos: " + oError.message);
+			});
+		},
+
+		/**
+		 * Handler para aplicar filtros
+		 */
+		onFilterApply: function () {
+			const oModel = this.getModel("projectModel");
+			const oFilters = oModel.getProperty("/filters");
+			const oAppModel = this.getModel("appModel");
+			const sManagerId = oAppModel.getProperty("/user/id");
+			
+			this.getView().setBusy(true);
+
+			ProjectService.filterProjects(oFilters, sManagerId).then((aProjects) => {
+				oModel.setProperty("/projects", aProjects);
+				this._updateRejectedCount();
+				this._updateProjectCount(aProjects.length);
+				this.getView().setBusy(false);
+			}).catch((oError) => {
+				this.getView().setBusy(false);
+				this.showErrorMessage("Error al filtrar proyectos: " + oError.message);
+			});
+		},
+
+		/**
+		 * Handler para limpiar filtros
+		 */
+		onFilterClear: function () {
+			const oModel = this.getModel("projectModel");
+			oModel.setProperty("/filters/code", "");
+			oModel.setProperty("/filters/status", []);
+			oModel.setProperty("/filters/management", "");
+			
+			// Recargar todos los proyectos
+			this._loadProjects();
+			
+			this.showSuccessMessage(this.getResourceBundle().getText("msgFilterCleared"));
+		},
+
+		/**
+	 * Handler para exportar a Excel (CSV)
+	 */
+	onExportExcel: function () {
+		const oModel = this.getModel("projectModel");
+		const aProjects = oModel.getProperty("/projects");
+		
+		if (aProjects.length === 0) {
+			this.showWarningMessage("No hay proyectos para exportar");
+			return;
+		}
+
+		// Crear CSV
+		const sCsv = this._generateCSV(aProjects);
+		
+		// Descargar archivo
+		const blob = new Blob(["\ufeff" + sCsv], { type: "text/csv;charset=utf-8;" });
+		const link = document.createElement("a");
+		const url = URL.createObjectURL(blob);
+		
+		link.setAttribute("href", url);
+		link.setAttribute(
+			"download",
+			"Proyectos_" + new Date().toISOString().split('T')[0] + ".csv"
+		);
+		link.style.visibility = "hidden";
+		
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+
+		this.showSuccessMessage(this.getResourceBundle().getText("msgExportSuccess"));
+	},
+	/**
+	 * Handler para navegar al detalle del proyecto
+	 * @param {sap.ui.base.Event} oEvent - Evento
+	 */
+	onProjectPress: function (oEvent) {
+			
+			// Determinar si viene de link o de selección de fila
+			if (oEvent.getParameter("listItem")) {
+				oItem = oEvent.getParameter("listItem");
+			} else {
+				// Viene del link, obtener el contexto del binding
+				const oSource = oEvent.getSource();
+				oItem = oSource.getParent();
+			}
+			
+			const oContext = oItem.getBindingContext("projectModel");
+			const sProjectId = oContext.getProperty("id");
+			
+			// Navegar al detalle (será implementado en Fase 2)
+			this.showWarningMessage("La navegación al detalle será implementada en la Fase 2");
+			
+			// Descomentar cuando se implemente la ruta projectDetail:
+			// this.getRouter().navTo("projectDetail", {
+			// 	projectId: sProjectId
+			// });
+		},
+
+		/**
+		 * Formatea el tooltip del semáforo con detalles
+		 * @param {string} sSemaphore - Semáforo
+		 * @param {number} iPercentage - Porcentaje
+		 * @returns {string} Tooltip
+		 */
+		formatSemaphoreDetailedTooltip: function (sSemaphore, iPercentage) {
+			return sSemaphore + ": " + iPercentage + "% de PEPs válidos";
+		},
+
+		/**
+		 * Formatea el color del semáforo para Icon
+		 * @param {string} sSemaphore - Semáforo
+		 * @returns {string} Color hex
+		 */
+		formatSemaphoreColorCode: function (sSemaphore) {
+			switch (sSemaphore) {
+				case "Verde":
+					return "#107E3E";
+				case "Ámbar":
+					return "#E76500";
+				case "Rojo":
+					return "#E4002B";
+				default:
+					return "#666666";
+			}
+		},
+
+		/**
+		 * Handler para logout
+		 */
+		onLogout: function () {
+			this.showConfirmDialog(
+				"¿Está seguro que desea cerrar sesión?",
+				() => {
+					this.getRouter().navTo("login");
+				},
+				"Cerrar Sesión"
+			);
+		}
+\t/**\n\t * Genera el contenido CSV con los datos de los proyectos
+\t * @param {Array} aProjects - Array de proyectos
+\t * @returns {string} Contenido CSV
+\t * @private
+\t\t */
+\t\t_generateCSV: function (aProjects) {
+\t\t\t// Encabezados
+\t\t\tconst aHeaders = [
+\t\t\t\t"Estado",
+\t\t\t\t"Código",
+\t\t\t\t"Descripción",
+\t\t\t\t"Nombre",
+\t\t\t\t"Dirección Ejecutora",
+\t\t\t\t"Gerencia Ejecutora",
+\t\t\t\t"Gerente",
+\t\t\t\t"Dirección Solicitante",
+\t\t\t\t"Jefatura Solicitante",
+\t\t\t\t"Fecha Inicio",
+\t\t\t\t"Fecha Fin",
+\t\t\t\t"Importe Comprometido",
+\t\t\t\t"Importe Real",
+\t\t\t\t"Semáforo",
+\t\t\t\t"% PEPs Válidos"
+\t\t\t];
+
+\t\t\tlet sCsv = aHeaders.join(",") + "\\n";
+
+\t\t\t// Datos
+\t\t\taProjects.forEach((oProject) => {
+\t\t\t\tconst aRow = [
+\t\t\t\t\toProject.status || "",
+\t\t\t\t\toProject.code || "",
+\t\t\t\t\t'"' + (oProject.description || "").replace(/"/g, '""') + '"',
+\t\t\t\t\t'"' + (oProject.name || "").replace(/"/g, '""') + '"',
+\t\t\t\t\toProject.direction || "",
+\t\t\t\t\toProject.management || "",
+\t\t\t\t\toProject.manager || "",
+\t\t\t\t\toProject.requestDirection || "",
+\t\t\t\t\toProject.requestDepartment || "",
+\t\t\t\t\tformatter.formatDate(oProject.startDate),
+\t\t\t\t\tformatter.formatDate(oProject.endDate),
+\t\t\t\t\toProject.importeComprometido || 0,
+\t\t\t\t\toProject.importeReal || 0,
+\t\t\t\t\toProject.semaphore || "",
+\t\t\t\t\toProject.validPepPercentage || 0
+\t\t\t\t];
+\t\t\t\tsCsv += aRow.join(",") + "\\n";
+\t\t\t});
+
+\t\t\treturn sCsv;
+\t\t}
+		}
+	});
+});

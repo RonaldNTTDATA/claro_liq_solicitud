@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Solicitud Cierre de Proyecto</title>
+		<script
+			id="sap-ui-bootstrap"
+		src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_horizon"
+			data-sap-ui-resourceroots='{
+				"com.demo.prototype": "./"
+			}'
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-async="true"
+			data-sap-ui-frameOptions="trusted"
+		></script>
+		<script>
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require(["sap/ui/core/ComponentContainer"], function(ComponentContainer) {
+					new ComponentContainer({
+						name: "com.demo.prototype",
+						settings: {
+							id: "com.demo.prototype"
+						},
+						async: true,
+						manifest: true
+					}).placeAt("content");
+				});
+			});
+		</script>
+	</head>
+	<body class="sapUiBody sapUiSizeCompact">
+		<div id="content"></div>
+	</body>
+</html>

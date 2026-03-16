@@ -1,0 +1,67 @@
+<mvc:View
+	controllerName="com.demo.prototype.controller.Login"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	displayBlock="true">
+	<Page showHeader="false">
+		<content>
+			<VBox alignItems="Center" justifyContent="Center" class="login-container" height="100%">
+				<Panel width="400px" headerText="" class="loginPanel">
+					<content>
+						<VBox alignItems="Center" class="sapUiMediumMarginBottom">
+							<core:Icon 
+								src="sap-icon://activate" 
+								size="3rem" 
+								color="#0a6ed1"
+								class="sapUiSmallMarginBottom" />
+							<Title text="Gestión de Proyectos SAP" level="H2" class="sapUiTinyMarginBottom"/>
+							<Text text="Ingrese sus credenciales" class="sapUiTinyMarginBottom"/>
+						</VBox>
+						<f:SimpleForm
+							editable="true"
+							layout="ResponsiveGridLayout"
+							labelSpanXL="4"
+							labelSpanL="4"
+							labelSpanM="4"
+							labelSpanS="12"
+							emptySpanXL="0"
+							emptySpanL="0"
+							emptySpanM="0"
+							emptySpanS="0"
+							columnsXL="1"
+							columnsL="1"
+							columnsM="1">
+							<f:content>
+								<Label text="Usuario" required="true"/>
+								<Input
+									id="usernameInput"
+									placeholder="Ingrese su usuario"
+									submit=".onLogin"/>
+								<Label text="Contraseña" required="true"/>
+								<Input
+									id="passwordInput"
+									type="Password"
+									placeholder="Ingrese su contraseña"
+									submit=".onLogin"/>
+							</f:content>
+						</f:SimpleForm>
+						<VBox class="sapUiSmallMarginTop">
+							<Button
+								text="Iniciar Sesión"
+								type="Emphasized"
+								width="100%"
+								press=".onLogin"/>
+						</VBox>
+						<MessageStrip
+							text="Usuarios de prueba: gerente1, gerente2, gerente3 / Contraseña: demo123"
+							type="Information"
+							showIcon="true"
+							class="sapUiSmallMarginTop"/>
+					</content>
+				</Panel>
+			</VBox>
+		</content>
+	</Page>
+</mvc:View>
