@@ -188,6 +188,15 @@
 											<Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
 												<Text text="{i18n>colCostCenter}" />
 											</Column>
+											<Column width="14rem" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colCostCenterResponsible}" />
+											</Column>
+											<Column width="14rem" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colCostCenterRequester}" />
+											</Column>
+											<Column width="14rem" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colFinanceProjectCode}" />
+											</Column>
 											<Column width="6rem" hAlign="Center" minScreenWidth="Tablet" demandPopin="true">
 												<Text text="{i18n>colMovements}" />
 											</Column>
@@ -233,6 +242,15 @@
 													
 													<!-- Centro Costo -->
 													<Text text="{detailModel>costCenter}" />
+
+													<!-- Centro de Costo Responsable -->
+													<Text text="{detailModel>costCenterResponsible}" />
+
+													<!-- Centro de Costo Solicitante -->
+													<Text text="{detailModel>costCenterRequester}" />
+
+													<!-- Código Proyecto Finanzas -->
+													<Text text="{detailModel>financeProjectCode}" />
 													
 													<!-- Semáforo Movimientos -->
 													<core:Icon 
@@ -393,6 +411,9 @@
 											<Column width="6rem" hAlign="Center" minScreenWidth="Desktop" demandPopin="true">
 												<Text text="{i18n>colFinalEntry}" />
 											</Column>
+											<Column width="8rem" hAlign="Center" minScreenWidth="Tablet" demandPopin="true">
+												<Text text="{i18n>colCurrency}" />
+											</Column>
 											<Column width="10rem" hAlign="End" minScreenWidth="Tablet" demandPopin="true">
 												<Text text="{i18n>colAmount}" />
 											</Column>
@@ -449,21 +470,24 @@
 															path: 'detailModel>entryFinal',
 															formatter: '.formatter.formatBooleanColor'
 														}" />
+
+														<!-- Moneda -->
+														<Text text="{
+															path: 'detailModel>currency',
+															formatter: '.formatter.formatCurrencyLabel'
+														}" />
 													
 													<!-- Importe -->
 													<ObjectNumber 
-														number="{detailModel>amountSoles}"
-														unit="PEN" />
+															number="{detailModel>amountSoles}" />
 													
 													<!-- Importe EM -->
 													<ObjectNumber 
-														number="{detailModel>amountSolesEM}"
-														unit="PEN" />
+															number="{detailModel>amountSolesEM}" />
 													
 													<!-- Importe RF -->
 													<ObjectNumber 
-														number="{detailModel>amountSolesRF}"
-														unit="PEN" />
+															number="{detailModel>amountSolesRF}" />
 													
 													<!-- % Aceptación -->
 													<ProgressIndicator 
@@ -493,74 +517,6 @@
 				</uxap:subSections>
 			</uxap:ObjectPageSection>
 
-			<!-- Tab: Historial de Solicitudes -->
-			<uxap:ObjectPageSection title="{i18n>tabHistory}" id="historySection">
-				<uxap:subSections>
-					<uxap:ObjectPageSubSection>
-						<uxap:blocks>
-							<VBox width="100%">
-								<Toolbar>
-									<Title text="{i18n>historyTitle}" level="H4" />
-									<ToolbarSpacer />
-									<Button 
-										text="{i18n>btnExportHistory}" 
-										icon="sap-icon://pdf-attachment" 
-										press="onExportHistory" />
-								</Toolbar>
-								
-								<!-- Timeline de solicitudes -->
-								<List
-									id="historyList"
-									items="{detailModel>/requestHistory}"
-									noDataText="{i18n>msgNoHistory}">
-									<CustomListItem>
-										<VBox class="sapUiSmallMargin">
-											<HBox>
-												<core:Icon 
-													src="{
-														path: 'detailModel>status',
-														formatter: '.formatter.formatRequestIcon'
-													}"
-													color="{
-														path: 'detailModel>status',
-														formatter: '.formatter.formatRequestColor'
-													}"
-													size="2rem"
-													class="sapUiSmallMarginEnd" />
-												<VBox>
-													<HBox>
-														<ObjectStatus 
-															text="{detailModel>status}"
-															state="{
-																path: 'detailModel>status',
-																formatter: '.formatter.formatState'
-															}"
-															class="sapUiTinyMarginEnd" />
-														<Text text="{
-															path: 'detailModel>requestDate',
-															formatter: '.formatter.formatDateTime'
-														}" />
-													</HBox>
-													<Text text="{i18n>lblRequestingUser}: {detailModel>requestingUserName}" class="sapUiTinyMarginTop" />
-													<Text 
-														text="{i18n>lblRejectionReason}: {detailModel>rejectionReason}"
-														visible="{= ${detailModel>status} === 'Rechazado' }"
-														class="sapUiTinyMarginTop" />
-													<Link 
-														text="{i18n>linkViewSnapshot}"
-														press="onViewSnapshot"
-														class="sapUiTinyMarginTop" />
-												</VBox>
-											</HBox>
-										</VBox>
-									</CustomListItem>
-								</List>
-							</VBox>
-						</uxap:blocks>
-					</uxap:ObjectPageSubSection>
-				</uxap:subSections>
-			</uxap:ObjectPageSection>
-			
 			<!-- Sección de Adjuntos -->
 			<uxap:ObjectPageSection title="Adjuntos" id="attachmentsSection">
 				<uxap:subSections>

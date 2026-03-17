@@ -90,10 +90,8 @@ sap.ui.define([
 			let iPEPCounter = 1;
 
 			const aPEPTypes = [
-				"PE-RM-IT-OER (Operación Equipo Rodante)",
-				"PE-RM-IC-IIT (Inversión Infraestructura IT)",
-				"PE-RM-IT-ICI (Infraestructura Civil)",
-				"PE-RM-IC-OTR (Otros)"
+				"PE-RM-IT-OER",
+				"PE-RM-IC-IIT"
 			];
 
 			const aCostCenters = [
@@ -105,6 +103,8 @@ sap.ui.define([
 			];
 
 			const aAFeCPrefixes = ["AFEC-2024-", "AFEC-2025-", "AFEC-2026-"];
+			const aCostCentersRequester = ["0211A02610", "0211A02810"];
+			const aFinanceProjectCodes = ["26SAP0001", "26SAP0002", "26SAP0003", "26SAP0004", "26SAP0005"];
 
 			aProjects.forEach((oProject) => {
 				// Cada proyecto tiene entre 2 y 6 PEPs
@@ -127,7 +127,9 @@ sap.ui.define([
 						projectId: oProject.id,
 						type: aPEPTypes[Math.floor(Math.random() * aPEPTypes.length)],
 						costCenter: aCostCenters[Math.floor(Math.random() * aCostCenters.length)],
-						financeProjectCode: `FIN-${oProject.code}-${String(i + 1).padStart(2, "0")}`,
+						costCenterResponsible: "0211A00809",
+						costCenterRequester: aCostCentersRequester[i % aCostCentersRequester.length],
+						financeProjectCode: aFinanceProjectCodes[i % aFinanceProjectCodes.length],
 						currentBalance: bHasBalanceIssue ? (Math.random() * 5000 + 100).toFixed(2) : 0.00,
 						sapStatus: Math.random() < 0.7 ? "ABIE" : (Math.random() < 0.5 ? "LIQ" : "CERR"),
 						afecId: sAFeCNumber,

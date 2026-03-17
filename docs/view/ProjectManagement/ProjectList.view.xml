@@ -245,9 +245,6 @@
 									formatter: '.formatter.formatDate'
 								}" />
 								
-							<!-- Moneda -->
-							<Text text="{projectModel>currency}" />
-							
 							<!-- Importe Comprometido -->
 							<ObjectNumber 
 								number="{
@@ -263,6 +260,12 @@
 									formatter: '.formatter.formatNumber'
 								}"
 								emphasized="false" />
+
+							<!-- Moneda -->
+							<Text text="{
+								path: 'projectModel>currency',
+								formatter: '.formatter.formatCurrencyLabel'
+							}" />
 							
 							<!-- Semáforo -->
 							<HBox alignItems="Center" justifyContent="Center">

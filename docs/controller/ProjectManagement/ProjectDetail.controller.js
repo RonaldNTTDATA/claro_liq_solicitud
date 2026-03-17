@@ -38,7 +38,6 @@ sap.ui.define([
 				project: {},
 				peps: [],
 				commitments: [],
-				requestHistory: [],
 				pepSummary: "",
 				commitmentSummary: "",
 				canRequestClosure: false,
@@ -65,15 +64,13 @@ sap.ui.define([
 			Promise.all([
 				ProjectService.getProjectById(sProjectId),
 				PEPService.getPEPsByProject(sProjectId),
-				CommitmentService.getCommitmentsByProject(sProjectId),
-				RequestService.getRequestsByProject(sProjectId)
-			]).then(([oProject, aPEPs, aCommitments, aRequests]) => {
+				CommitmentService.getCommitmentsByProject(sProjectId)
+			]).then(([oProject, aPEPs, aCommitments]) => {
 				const oModel = this.getModel("detailModel");
 				
 				oModel.setProperty("/project", oProject);
 				oModel.setProperty("/peps", aPEPs);
 				oModel.setProperty("/commitments", aCommitments);
-				oModel.setProperty("/requestHistory", aRequests);
 				
 				// Cargar adjuntos del proyecto
 				const sAttachmentsKey = "attachments_" + oProject.code;
@@ -170,7 +167,19 @@ sap.ui.define([
 				manager: oProject.manager,
 				pepCount: aPEPs.length,
 				semaphore: oProject.semaphore,
-				status: oProject.status
+				status: oProject.status,
+				approverUser: "",
+				projectManager: "",
+				approverOptions: [
+					{ key: "apro_finanzas_01", text: "apro_finanzas_01" },
+					{ key: "apro_finanzas_02", text: "apro_finanzas_02" },
+					{ key: "apro_finanzas_03", text: "apro_finanzas_03" }
+				],
+				projectManagerOptions: [
+					{ key: "gproy_001", text: "gproy_001" },
+					{ key: "gproy_002", text: "gproy_002" },
+					{ key: "gproy_003", text: "gproy_003" }
+				]
 			}), "dialogModel");
 
 			this._oConfirmDialog.open();
@@ -181,11 +190,19 @@ sap.ui.define([
 			const sProjectId = oModel.getProperty("/project/id");
 			const oAppModel = this.getOwnerComponent().getModel("appModel");
 			const sUserId = oAppModel.getProperty("/user/id");
+			const oDialogModel = this._oConfirmDialog.getModel("dialogModel");
+			const sApproverUser = (oDialogModel.getProperty("/approverUser") || "").trim();
+			const sProjectManager = (oDialogModel.getProperty("/projectManager") || "").trim();
+
+			if (!sApproverUser || !sProjectManager) {
+				MessageBox.warning("Debe ingresar Usuario Aprobador y Gerente de Proyecto para continuar.");
+				return;
+			}
 
 			this._oConfirmDialog.close();
 			this.getView().setBusy(true);
 
-			RequestService.createRequest(sProjectId, sUserId).then((oRequest) => {
+			RequestService.createRequest(sProjectId, sUserId, sApproverUser, sProjectManager).then((oRequest) => {
 				this.getView().setBusy(false);
 				
 				MessageBox.success(this.getResourceBundle().getText("msgRequestSuccess"), {

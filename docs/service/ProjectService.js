@@ -16,7 +16,7 @@ sap.ui.define([
 		 */
 		_initializeData: function () {
 			// Verificar si existe la clave de versión de datos
-			const DATA_VERSION = "v3.4"; // Versión actualizada - corregida descripción sin undefined
+			const DATA_VERSION = "v3.5"; // Versión con reglas APP1 de moneda y columnas fijas
 			const currentVersion = StorageService.load("dataVersion");
 			const existingProjects = StorageService.load(STORAGE_KEY) || [];
 			

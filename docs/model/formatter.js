@@ -81,6 +81,18 @@ sap.ui.define([
 		},
 
 		/**
+		 * Retorna código de moneda permitido para columnas (solo PEN o USD)
+		 * @param {string} currency - Código de moneda
+		 * @returns {string} Código de moneda normalizado
+		 */
+		formatCurrencyLabel: function (currency) {
+			if (currency === "USD") {
+				return "USD";
+			}
+			return "PEN";
+		},
+
+		/**
 		 * Formatea el estado del proyecto con badge colorido
 		 * @param {string} state - Estado del proyecto
 		 * @returns {string} Clase CSS para el estado

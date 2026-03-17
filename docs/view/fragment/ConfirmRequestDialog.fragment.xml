@@ -57,8 +57,51 @@
 					</content>
 				</Panel>
 
+				<Panel headerText="Aprobadores" class="sapUiSmallMarginBottom">
+					<content>
+						<layout:form.SimpleForm
+							editable="true"
+							layout="ResponsiveGridLayout"
+							labelSpanXL="5"
+							labelSpanL="5"
+							labelSpanM="5"
+							emptySpanXL="0"
+							emptySpanL="0"
+							emptySpanM="0"
+							columnsXL="1"
+							columnsL="1"
+							columnsM="1">
+							<layout:content>
+								<Label text="Usuario Aprobador *" />
+								<Input
+									id="approverUserInput"
+									value="{dialogModel>/approverUser}"
+									placeholder="Ingrese o busque usuario aprobador"
+									showSuggestion="true"
+									suggestionItems="{dialogModel>/approverOptions}">
+									<suggestionItems>
+										<core:Item key="{dialogModel>key}" text="{dialogModel>text}" />
+									</suggestionItems>
+								</Input>
+
+								<Label text="Gerente de Proyecto *" />
+								<Input
+									id="projectManagerInput"
+									value="{dialogModel>/projectManager}"
+									placeholder="Ingrese o busque gerente de proyecto"
+									showSuggestion="true"
+									suggestionItems="{dialogModel>/projectManagerOptions}">
+									<suggestionItems>
+										<core:Item key="{dialogModel>key}" text="{dialogModel>text}" />
+									</suggestionItems>
+								</Input>
+							</layout:content>
+						</layout:form.SimpleForm>
+					</content>
+				</Panel>
+
 				<MessageStrip
-					text="⚠️ Una vez enviada la solicitud, no podrá modificarla hasta que sea procesada por el área de finanzas."
+					text="Una vez enviada la solicitud, no podrá modificarla hasta que sea procesada por el área de finanzas."
 					type="Warning"
 					showIcon="true"
 					class="sapUiSmallMarginTop" />

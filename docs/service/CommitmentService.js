@@ -119,6 +119,7 @@ sap.ui.define([
 
 			const aDocumentTypes = ["SolPed", "Pedido"];
 			const aMaterialTypes = ["ZMAT", "SERV", "LEIH"];
+			const aCurrencies = ["PEN", "USD"];
 			const aSuppliers = [
 				{ code: "100025", name: "Proveedor Industrial SAC" },
 				{ code: "100026", name: "Servicios Técnicos EIRL" },
@@ -136,6 +137,7 @@ sap.ui.define([
 					const sDocPrefix = sDocType === "SolPed" ? "2000757" : "4500794";
 					const oSupplier = aSuppliers[Math.floor(Math.random() * aSuppliers.length)];
 					const fAmount = Math.random() * 50000 + 5000;
+					const sCurrency = aCurrencies[Math.floor(Math.random() * aCurrencies.length)];
 					
 					// Determinar si tiene EM y RF
 					const bHasEM = Math.random() < 0.75;
@@ -161,6 +163,7 @@ sap.ui.define([
 						materialType: aMaterialTypes[Math.floor(Math.random() * aMaterialTypes.length)],
 						deliveryDate: new Date(Date.now() + Math.random() * 90 * 24 * 60 * 60 * 1000),
 						entryFinal: bIsEntryFinal,
+						currency: sCurrency,
 						amountSoles: fAmount.toFixed(2),
 						emNumber: bHasEM ? `EM-${String(iCommitmentCounter).padStart(6, "0")}` : null,
 						quantityRegistered: bHasEM ? Math.floor(Math.random() * 100) + 1 : 0,

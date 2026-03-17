@@ -13,9 +13,11 @@ sap.ui.define([
 		 * Crea una solicitud de cierre de proyecto
 		 * @param {string} projectId - ID del proyecto
 		 * @param {string} userId - ID del usuario que solicita
+		 * @param {string} approverUser - Usuario aprobador ingresado
+		 * @param {string} projectManager - Gerente de proyecto ingresado
 		 * @returns {Promise<Object>} Promesa con solicitud creada
 		 */
-		createRequest: function (projectId, userId) {
+		createRequest: function (projectId, userId, approverUser, projectManager) {
 			return new Promise((resolve, reject) => {
 				setTimeout(async () => {
 					try {
@@ -66,6 +68,8 @@ sap.ui.define([
 							requestDate: new Date(),
 							requestingUser: userId,
 							requestingUserName: "Juan Carlos Rodríguez", // Usuario mock
+							approverUser: approverUser,
+							projectManager: projectManager,
 							status: "Solicitado",
 							validationsSnapshot: oSnapshot,
 							processingDate: null,
@@ -95,7 +99,9 @@ sap.ui.define([
 							additionalData: {
 								requestId: oRequest.id,
 								validPepPercentage: oProject.validPepPercentage,
-								pepCount: aPEPs.length
+								pepCount: aPEPs.length,
+								approverUser: approverUser,
+								projectManager: projectManager
 							},
 							result: "Exito"
 						});

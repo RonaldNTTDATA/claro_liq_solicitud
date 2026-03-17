@@ -12,8 +12,6 @@ sap.ui.define([], function () {
 		 */
 		generateProjects: function (count = 25) {
 			const projects = [];
-			const managements = ["Finanzas", "Mercadeo"];
-			const directions = ["Dirección de Proyectos", "Dirección de Desarrollo", "Dirección de Innovación"];
 			const statuses = ["En Proceso", "Solicitado", "Rechazado", "Aprobado"];
 			const managers = ["Sara Cordova"];
 
@@ -23,19 +21,14 @@ sap.ui.define([], function () {
 				
 				// Los primeros 3 proyectos siempre tienen semáforo verde y estado "En Proceso"
 				// Y cada uno se asigna a una gerencia diferente
-				let status, validPepPercentage, semaphore, managementIndex;
+				let status, validPepPercentage, semaphore;
 				if (i <= 3) {
 					status = "En Proceso";
 					validPepPercentage = 100;
 					semaphore = "Verde";
-					// NDRSAP001 -> Finanzas
-					// NDRSAP002 -> Mercadeo
-					// NDRSAP003 -> Finanzas
-					managementIndex = (i - 1) % 2;
 				} else {
 					status = statuses[Math.floor(Math.random() * statuses.length)];
 					validPepPercentage = Math.floor(Math.random() * 100);
-					managementIndex = i % 2;
 					
 					// Verde = 100%, Ámbar = todo lo demás (nunca rojo)
 					if (validPepPercentage === 100) {
@@ -53,19 +46,19 @@ sap.ui.define([], function () {
 
 				const importeComprometido = Math.floor(Math.random() * 5000000) + 500000;
 				const importeReal = Math.floor(importeComprometido * (Math.random() * 0.3 + 0.6)); // 60-90% del comprometido
-				const currencies = ["PEN", "USD", "EUR"];
-				const currency = currencies[i % 3]; // Rotar entre PEN, USD, EUR
+				const currencies = ["PEN", "USD"];
+				const currency = currencies[i % 2]; // Solo Soles y Dólares
 
 				projects.push({
 					id: `PRJ${String(i).padStart(4, "0")}`,
 					code: code,
-				description: `Proyecto de ${managements[managementIndex]} ${i}`,
+				description: `Proyecto de Finanzas ${i}`,
 					name: `Implementación Sistema ${["SAP", "Oracle", "Microsoft", "AWS"][i % 4]} - Fase ${Math.floor(Math.random() * 3) + 1}`,
 					status: status,
-					management: managements[managementIndex],
-					direction: directions[managementIndex % 3],
-					requestDirection: directions[(managementIndex + 1) % 3],
-					requestDepartment: `Jefatura de ${["Desarrollo", "Producción", "Calidad"][managementIndex % 3]}`,
+					management: "Finanzas",
+					direction: "Dirección de Proyectos",
+					requestDirection: "Dirección de Desarrollo",
+					requestDepartment: "Jefatura de Desarrollo",
 					manager: managers[0],
 					managerId: "MGR001",
 					startDate: startDate.toISOString(),
@@ -93,8 +86,10 @@ sap.ui.define([], function () {
 		 */
 		generatePEPs: function (projectId, count = 10) {
 			const peps = [];
-			const types = ["Proyecto de Inversión", "Infraestructura", "Tecnología"];
+			const types = ["PE-RM-IT-OER", "PE-RM-IC-IIT"];
 			const statuses = ["LIB", "LIQ", "CERR"];
+			const requesterCostCenters = ["0211A02610", "0211A02810"];
+			const financeProjectCodes = ["26SAP0001", "26SAP0002", "26SAP0003", "26SAP0004", "26SAP0005"];
 			
 			// Verificar si es uno de los primeros 3 proyectos (semáforo verde garantizado)
 			const isGreenProject = projectId.match(/PRJ000[1-3]$/);
@@ -125,10 +120,12 @@ sap.ui.define([], function () {
 					id: `${projectId}-PEP${i}`,
 					projectId: projectId,
 					code: pepCode,
-					name: `Elemento PEP ${i} - ${types[i % 3]}`,
-					type: types[i % 3],
+					name: `Elemento PEP ${i} - ${types[i % 2]}`,
+					type: types[i % 2],
 					costCenter: `CC-${String(Math.floor(Math.random() * 1000)).padStart(4, "0")}`,
-					financeProjectCode: `FP-${String(Math.floor(Math.random() * 10000)).padStart(6, "0")}`,
+					costCenterResponsible: "0211A00809",
+					costCenterRequester: requesterCostCenters[i % requesterCostCenters.length],
+					financeProjectCode: financeProjectCodes[i % financeProjectCodes.length],
 					status: statuses[Math.floor(Math.random() * statuses.length)],
 					currentBalance: hasBalanceIssue ? (Math.floor(Math.random() * 50000) + 1000).toFixed(2) : "0.00",
 					afecId: `AFEC-${String(Math.floor(Math.random() * 100000)).padStart(8, "0")}`,
