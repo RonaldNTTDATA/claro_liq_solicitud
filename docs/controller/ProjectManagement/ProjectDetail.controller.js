@@ -74,8 +74,10 @@ sap.ui.define([
 				
 				// Cargar adjuntos del proyecto
 				const sAttachmentsKey = "attachments_" + oProject.code;
-				const aAttachments = JSON.parse(localStorage.getItem(sAttachmentsKey) || "[]");
+				const aAttachmentsRaw = JSON.parse(localStorage.getItem(sAttachmentsKey) || "[]");
+				const aAttachments = this._normalizeAttachments(aAttachmentsRaw);
 				oModel.setProperty("/attachments", aAttachments);
+				this._refreshAttachmentBuckets(oModel, aAttachments);
 
 				// Calcular si puede solicitar cierre
 				const bCanRequest = oProject.semaphore === "Verde" && 
@@ -148,6 +150,17 @@ sap.ui.define([
 		},
 
 		onRequestClosure: function () {
+			const oModel = this.getModel("detailModel");
+			const aAttachments = oModel.getProperty("/attachments") || [];
+			const oRequiredCheck = this._validateRequiredAttachments(aAttachments);
+
+			if (!oRequiredCheck.valid) {
+				MessageBox.warning(
+					"Debe adjuntar obligatoriamente el Acta de Cierre y el Informe Técnico antes de solicitar el cierre."
+				);
+				return;
+			}
+
 			if (!this._oConfirmDialog) {
 				this._oConfirmDialog = sap.ui.xmlfragment(
 					"com.demo.prototype.view.fragment.ConfirmRequestDialog",
@@ -157,7 +170,6 @@ sap.ui.define([
 			}
 
 			// Pasar datos del proyecto al diálogo
-			const oModel = this.getModel("detailModel");
 			const oProject = oModel.getProperty("/project");
 			const aPEPs = oModel.getProperty("/peps");
 
@@ -436,13 +448,23 @@ sap.ui.define([
 
 			// Cargar adjuntos del localStorage
 			const sAttachmentsKey = "attachments_" + oProject.code;
-			const aAttachments = JSON.parse(localStorage.getItem(sAttachmentsKey) || "[]");
+			const aAttachmentsRaw = JSON.parse(localStorage.getItem(sAttachmentsKey) || "[]");
+			const aAttachments = this._normalizeAttachments(aAttachmentsRaw);
 
 			// Crear modelo para el diálogo
 			const oAttachmentModel = new JSONModel({
 				projectCode: oProject.code,
 				projectName: oProject.name,
-				attachments: aAttachments
+				selectedType: "ACTA_CIERRE",
+				attachmentTypeOptions: [
+					{ key: "ACTA_CIERRE", text: "Acta de Cierre" },
+					{ key: "INFORME_TECNICO", text: "Informe Técnico" },
+					{ key: "OTRO", text: "Otro" }
+				],
+				attachments: aAttachments,
+				actaAttachments: aAttachments.filter(a => a.type === "ACTA_CIERRE"),
+				informeAttachments: aAttachments.filter(a => a.type === "INFORME_TECNICO"),
+				otherAttachments: aAttachments.filter(a => a.type === "OTRO")
 			});
 			this.setModel(oAttachmentModel, "attachmentModel");
 
@@ -482,6 +504,13 @@ sap.ui.define([
 			const oAttachmentModel = this.getModel("attachmentModel");
 			const sProjectCode = oAttachmentModel.getProperty("/projectCode");
 			const aAttachments = oAttachmentModel.getProperty("/attachments") || [];
+			const sAttachmentType = oAttachmentModel.getProperty("/selectedType") || "OTRO";
+
+			if ((sAttachmentType === "ACTA_CIERRE" || sAttachmentType === "INFORME_TECNICO") &&
+				aAttachments.some(att => att.type === sAttachmentType)) {
+				MessageBox.warning("Solo puede adjuntar un archivo para ese tipo obligatorio. Si desea cambiarlo, elimine el actual.");
+				return;
+			}
 
 			// Simular lectura del archivo
 			const oFile = oFileUploader.oFileUpload.files[0];
@@ -499,6 +528,8 @@ sap.ui.define([
 					mimeType: this._getMimeType(oFile.name),
 					uploadDate: new Date().toISOString(),
 					url: URL.createObjectURL(oFile),
+					type: sAttachmentType,
+					typeLabel: this._getAttachmentTypeLabel(sAttachmentType),
 					index: aAttachments.length
 				};
 
@@ -511,10 +542,12 @@ sap.ui.define([
 
 				// Actualizar modelo
 				oAttachmentModel.setProperty("/attachments", aAttachments);
+				this._refreshAttachmentBuckets(oAttachmentModel, aAttachments);
 
 				// Actualizar también el detailModel para reflejar cambios en la vista principal
 				const oDetailModel = this.getModel("detailModel");
 				oDetailModel.setProperty("/attachments", aAttachments);
+				this._refreshAttachmentBuckets(oDetailModel, aAttachments);
 
 				// Limpiar FileUploader
 				oFileUploader.clear();
@@ -551,9 +584,11 @@ sap.ui.define([
 
 						// Actualizar modelos
 						oAttachmentModel.setProperty("/attachments", aAttachments);
+						this._refreshAttachmentBuckets(oAttachmentModel, aAttachments);
 						
 						const oDetailModel = this.getModel("detailModel");
 						oDetailModel.setProperty("/attachments", aAttachments);
+						this._refreshAttachmentBuckets(oDetailModel, aAttachments);
 
 						MessageToast.show("Archivo eliminado");
 					}
@@ -562,7 +597,7 @@ sap.ui.define([
 		},
 
 		onDownloadAttachment: function (oEvent) {
-			const oContext = oEvent.getSource().getBindingContext("detailModel");
+			const oContext = oEvent.getSource().getBindingContext("attachmentModel") || oEvent.getSource().getBindingContext("detailModel");
 			const sFileName = oContext.getProperty("fileName");
 			MessageToast.show("Descargando: " + sFileName);
 			// En una implementación real, aquí se descargaría el archivo
@@ -590,6 +625,51 @@ sap.ui.define([
 			if (iBytes < 1024) return iBytes + " B";
 			if (iBytes < 1024 * 1024) return (iBytes / 1024).toFixed(2) + " KB";
 			return (iBytes / (1024 * 1024)).toFixed(2) + " MB";
+		},
+
+		_normalizeAttachments: function (aAttachments) {
+			return (aAttachments || []).map((att, idx) => {
+				const sType = att.type || "OTRO";
+				const oNormalized = Object.assign({}, att);
+				oNormalized.type = sType;
+				oNormalized.typeLabel = att.typeLabel || this._getAttachmentTypeLabel(sType);
+				oNormalized.index = typeof att.index === "number" ? att.index : idx;
+				return oNormalized;
+			});
+		},
+
+		_getAttachmentTypeLabel: function (sType) {
+			if (sType === "ACTA_CIERRE") {
+				return "Acta de Cierre";
+			}
+			if (sType === "INFORME_TECNICO") {
+				return "Informe Técnico";
+			}
+			return "Otro";
+		},
+
+		_validateRequiredAttachments: function (aAttachments) {
+			const bHasActa = (aAttachments || []).some(att => att.type === "ACTA_CIERRE");
+			const bHasInforme = (aAttachments || []).some(att => att.type === "INFORME_TECNICO");
+			return {
+				valid: bHasActa && bHasInforme,
+				hasActa: bHasActa,
+				hasInforme: bHasInforme
+			};
+		},
+
+		_refreshAttachmentBuckets: function (oModel, aAttachments) {
+			if (!oModel) {
+				return;
+			}
+
+			const aAll = aAttachments || [];
+			oModel.setProperty("/actaAttachments", aAll.filter(a => a.type === "ACTA_CIERRE"));
+			oModel.setProperty("/informeAttachments", aAll.filter(a => a.type === "INFORME_TECNICO"));
+			oModel.setProperty("/otherAttachments", aAll.filter(a => a.type === "OTRO"));
+
+			const oRequiredCheck = this._validateRequiredAttachments(aAll);
+			oModel.setProperty("/hasRequiredAttachments", oRequiredCheck.valid);
 		}
 	});
 });

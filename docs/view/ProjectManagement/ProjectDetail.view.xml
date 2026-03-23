@@ -523,6 +523,13 @@
 					<uxap:ObjectPageSubSection>
 						<uxap:blocks>
 							<VBox class="sapUiSmallMargin">
+								<MessageStrip
+									text="Faltan documentos obligatorios: Acta de Cierre e Informe Técnico."
+									type="Warning"
+									showIcon="true"
+									visible="{= !${detailModel>/hasRequiredAttachments} }"
+									class="sapUiSmallMarginBottom" />
+
 								<HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBottom">
 									<Label text="Archivos adjuntos ({= ${detailModel>/attachments}.length })" design="Bold" />
 									<Button
@@ -537,7 +544,7 @@
 									noDataText="No hay archivos adjuntos para este proyecto">
 									<StandardListItem
 										title="{detailModel>fileName}"
-										description="Tamaño: {detailModel>fileSize} | Fecha: {path: 'detailModel>uploadDate', formatter: '.formatter.formatDateTime'}"
+										description="Tipo: {detailModel>typeLabel} | Tamaño: {detailModel>fileSize} | Fecha: {path: 'detailModel>uploadDate', formatter: '.formatter.formatDateTime'}"
 										icon="{path: 'detailModel>mimeType', formatter: '.formatter.formatFileIcon'}"
 										type="Active"
 										press="onDownloadAttachment">

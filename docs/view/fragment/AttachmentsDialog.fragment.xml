@@ -12,11 +12,19 @@
 		<content>
 			<VBox class="sapUiSmallMargin">
 				<MessageStrip
-					text="Puede adjuntar archivos PDF, Excel o Word como sustento de la solicitud de cierre"
+					text="Debe adjuntar obligatoriamente un Acta de Cierre y un Informe Técnico. También puede adjuntar otros documentos."
 					type="Information"
 					showIcon="true"
 					class="sapUiSmallMarginBottom" />
 				
+				<Label text="Tipo de adjunto:" class="sapUiTinyMarginBottom" />
+				<Select
+					selectedKey="{attachmentModel>/selectedType}"
+					items="{attachmentModel>/attachmentTypeOptions}"
+					class="sapUiSmallMarginBottom">
+					<core:Item key="{attachmentModel>key}" text="{attachmentModel>text}" />
+				</Select>
+
 				<!-- File Uploader -->
 				<Label text="Seleccionar archivo:" class="sapUiTinyMarginBottom" />
 				
@@ -42,13 +50,51 @@
 				
 				<!-- Lista de archivos adjuntos -->
 				<VBox class="sapUiSmallMarginTop">
-					<Label text="Archivos adjuntos ({= ${attachmentModel>/attachments}.length }):" class="sapUiTinyMarginBottom" design="Bold" />
+					<Label text="Acta de Cierre (obligatorio)" class="sapUiTinyMarginBottom" design="Bold" />
 					<List
-						items="{attachmentModel>/attachments}"
-						noDataText="No hay archivos adjuntos">
+						mode="Delete"
+						delete=".onRemoveAttachment"
+						items="{attachmentModel>/actaAttachments}"
+						noDataText="No adjuntado">
 						<StandardListItem
 							title="{attachmentModel>fileName}"
 							description="{attachmentModel>fileSize}"
+							icon="sap-icon://document-text"
+							type="Active"
+							press=".onDownloadAttachment">
+							<customData>
+								<core:CustomData key="index" value="{attachmentModel>index}" />
+							</customData>
+						</StandardListItem>
+					</List>
+
+					<Label text="Informe Técnico (obligatorio)" class="sapUiSmallMarginTop sapUiTinyMarginBottom" design="Bold" />
+					<List
+						mode="Delete"
+						delete=".onRemoveAttachment"
+						items="{attachmentModel>/informeAttachments}"
+						noDataText="No adjuntado">
+						<StandardListItem
+							title="{attachmentModel>fileName}"
+							description="{attachmentModel>fileSize}"
+							icon="sap-icon://doc-attachment"
+							type="Active"
+							press=".onDownloadAttachment">
+							<customData>
+								<core:CustomData key="index" value="{attachmentModel>index}" />
+							</customData>
+						</StandardListItem>
+					</List>
+
+					<Label text="Otros adjuntos" class="sapUiSmallMarginTop sapUiTinyMarginBottom" design="Bold" />
+					<List
+						mode="Delete"
+						delete=".onRemoveAttachment"
+						items="{attachmentModel>/otherAttachments}"
+						noDataText="No hay archivos adjuntos">
+						<StandardListItem
+							title="{attachmentModel>fileName}"
+							description="Tipo: {attachmentModel>typeLabel} | {attachmentModel>fileSize}"
 							icon="sap-icon://document"
 							type="Active"
 							press=".onDownloadAttachment">
