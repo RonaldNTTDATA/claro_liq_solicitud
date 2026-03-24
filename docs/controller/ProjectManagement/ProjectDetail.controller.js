@@ -155,9 +155,7 @@ sap.ui.define([
 			const oRequiredCheck = this._validateRequiredAttachments(aAttachments);
 
 			if (!oRequiredCheck.valid) {
-				MessageBox.warning(
-					"Debe adjuntar obligatoriamente el Acta de Cierre y el Informe Técnico antes de solicitar el cierre."
-				);
+				MessageBox.warning(oRequiredCheck.message);
 				return;
 			}
 
@@ -649,12 +647,27 @@ sap.ui.define([
 		},
 
 		_validateRequiredAttachments: function (aAttachments) {
-			const bHasActa = (aAttachments || []).some(att => att.type === "ACTA_CIERRE");
-			const bHasInforme = (aAttachments || []).some(att => att.type === "INFORME_TECNICO");
+			const iActaCount = (aAttachments || []).filter(att => att.type === "ACTA_CIERRE").length;
+			const iInformeCount = (aAttachments || []).filter(att => att.type === "INFORME_TECNICO").length;
+			const bHasActa = iActaCount >= 1;
+			const bHasInforme = iInformeCount >= 1;
+			const bSingleActa = iActaCount === 1;
+			const bSingleInforme = iInformeCount === 1;
+
+			let sMessage = "";
+			if (!bHasActa || !bHasInforme) {
+				sMessage = "Debe adjuntar obligatoriamente un Acta de Cierre y un Informe Técnico antes de solicitar el cierre.";
+			} else if (!bSingleActa || !bSingleInforme) {
+				sMessage = "Solo se permite un Acta de Cierre y un Informe Técnico. Elimine duplicados antes de solicitar el cierre.";
+			}
+
 			return {
-				valid: bHasActa && bHasInforme,
+				valid: bHasActa && bHasInforme && bSingleActa && bSingleInforme,
 				hasActa: bHasActa,
-				hasInforme: bHasInforme
+				hasInforme: bHasInforme,
+				actaCount: iActaCount,
+				informeCount: iInformeCount,
+				message: sMessage
 			};
 		},
 
