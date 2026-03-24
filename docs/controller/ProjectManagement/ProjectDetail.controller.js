@@ -42,7 +42,7 @@ sap.ui.define([
 				commitmentSummary: "",
 				canRequestClosure: false,
 				filters: {
-					showOnlyProblems: false
+					showOnlyProblems: true
 				},
 				commitmentFilters: {
 					docType: "",
@@ -86,6 +86,9 @@ sap.ui.define([
 
 				// Actualizar resúmenes
 				this._updateSummaries();
+
+				// Aplicar filtro por defecto de PEPs con problemas
+				this.onFilterProblems();
 
 				this.getView().setBusy(false);
 			}).catch((oError) => {
