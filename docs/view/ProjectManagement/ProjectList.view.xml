@@ -189,9 +189,6 @@
 					<Column width="6rem" hAlign="Center" minScreenWidth="Tablet" demandPopin="true">
 						<Text text="{i18n>colCurrency}" />
 					</Column>
-					<Column width="8rem" hAlign="Center" minScreenWidth="Desktop" demandPopin="true">
-						<Text text="{i18n>colSemaphore}" />
-					</Column>
 					<Column width="5rem" hAlign="Center" minScreenWidth="Desktop" demandPopin="true">
 						<Text text="Acciones" />
 					</Column>
@@ -266,28 +263,6 @@
 								path: 'projectModel>currency',
 								formatter: '.formatter.formatCurrencyLabel'
 							}" />
-							
-							<!-- Semáforo -->
-							<HBox alignItems="Center" justifyContent="Center">
-								<core:Icon 
-									src="{
-										path: 'projectModel>semaphore',
-										formatter: '.formatter.formatSemaphoreIcon'
-									}"
-									color="{
-										path: 'projectModel>semaphore',
-										formatter: '.formatter.formatSemaphoreColorCode'
-									}"
-									size="1.5rem"
-									tooltip="{
-										parts: [
-											'projectModel>semaphore',
-											'projectModel>validPepPercentage'
-										],
-										formatter: '.formatSemaphoreDetailedTooltip'
-									}" />
-							</HBox>
-
 							<!-- Acciones -->
 							<HBox justifyContent="Center">
 								<Button 

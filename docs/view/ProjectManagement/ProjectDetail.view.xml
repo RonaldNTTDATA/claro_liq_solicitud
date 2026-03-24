@@ -197,12 +197,6 @@
 											<Column width="14rem" minScreenWidth="Desktop" demandPopin="true">
 												<Text text="{i18n>colFinanceProjectCode}" />
 											</Column>
-											<Column width="6rem" hAlign="Center" minScreenWidth="Tablet" demandPopin="true">
-												<Text text="{i18n>colMovements}" />
-											</Column>
-											<Column width="6rem" hAlign="Center" minScreenWidth="Tablet" demandPopin="true">
-												<Text text="{i18n>colCommitments}" />
-											</Column>
 											<Column width="6rem" hAlign="Center" minScreenWidth="Tablet" demandPopin="true" visible="false">
 												<Text text="{i18n>colAFeC}" />
 											</Column>
@@ -251,32 +245,6 @@
 
 													<!-- Código Proyecto Finanzas -->
 													<Text text="{detailModel>financeProjectCode}" />
-													
-													<!-- Semáforo Movimientos -->
-													<core:Icon 
-														src="{
-															path: 'detailModel>validations/movements',
-															formatter: '.formatter.formatValidationIcon'
-														}"
-														color="{
-															path: 'detailModel>validations/movements',
-															formatter: '.formatter.formatValidationColor'
-														}"
-														size="1.2rem"
-														tooltip="CJI3: Movimientos" />
-													
-													<!-- Semáforo Compromisos -->
-													<core:Icon 
-														src="{
-															path: 'detailModel>validations/commitments',
-															formatter: '.formatter.formatValidationIcon'
-														}"
-														color="{
-															path: 'detailModel>validations/commitments',
-															formatter: '.formatter.formatValidationColor'
-														}"
-														size="1.2rem"
-														tooltip="CJI5: Compromisos" />
 													
 													<!-- Semáforo AFeC -->
 													<core:Icon 
@@ -411,6 +379,9 @@
 											<Column width="6rem" hAlign="Center" minScreenWidth="Desktop" demandPopin="true">
 												<Text text="{i18n>colFinalEntry}" />
 											</Column>
+											<Column width="8rem" hAlign="Center" minScreenWidth="Desktop" demandPopin="true">
+												<Text text="{i18n>colCommitments}" />
+											</Column>
 											<Column width="8rem" hAlign="Center" minScreenWidth="Tablet" demandPopin="true">
 												<Text text="{i18n>colCurrency}" />
 											</Column>
@@ -470,6 +441,13 @@
 															path: 'detailModel>entryFinal',
 															formatter: '.formatter.formatBooleanColor'
 														}" />
+
+														<!-- Check Compromisos -->
+														<core:Icon
+															src="{= ${detailModel>entryFinal} &amp;&amp; ${detailModel>acceptancePercentage} >= 100 ? 'sap-icon://accept' : 'sap-icon://decline' }"
+															color="{= ${detailModel>entryFinal} &amp;&amp; ${detailModel>acceptancePercentage} >= 100 ? '#107E3E' : '#BB0000' }"
+															size="1.2rem"
+															tooltip="{= ${detailModel>entryFinal} &amp;&amp; ${detailModel>acceptancePercentage} >= 100 ? 'Compromiso completo' : 'Compromiso pendiente' }" />
 
 														<!-- Moneda -->
 														<Text text="{
